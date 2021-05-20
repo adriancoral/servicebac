@@ -1,0 +1,107 @@
+# -- Application ---------------------------------------------------------------------------
+/site/public/tools
+!/site/public/tools/.gitkepp
+/site/node_modules
+/site/public/hot
+/site/public/storage
+/site/public/js/app.js
+/site/public/css/app.css
+/site/storage/*.key
+/site/vendor
+/site/.env
+/site/.env.backup
+/site/.phpunit.result.cache
+/site/.php_cs.cache
+/dockerstack/etc/ssl
+
+/dockerstack/etc/ssl/**/*
+!dockerstack/etc/ssl/.gitkepp
+
+npm-debug.log
+yarn-error.log
+
+# -- Editores ---------------------------------------------------------------------------
+# vim
+.*.sw[a-z]
+*.un~
+Session.vim
+.netrwhist
+
+# eclipse
+*.pydevproject
+.project
+.metadata
+bin/**
+tmp/**
+tmp/**/*
+*.tmp
+*.bak
+*.swp
+*~.nib
+local.properties
+.classpath
+.settings/
+.loadpath
+.externalToolBuilders/
+*.launch
+.buildpath
+
+# phpstorm webstorm
+.idea/
+
+# textmate
+*.tmproj
+*.tmproject
+tmtags
+
+# sublimetext
+/*.sublime-project
+*.sublime-workspace
+
+# netbeans
+nbproject/private/
+build/
+nbbuild/
+dist/
+nbdist/
+nbactions.xml
+nb-configuration.xml
+
+# -- Sistemas Operativos ----------------------------------------------------------------
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Linux
+!.gitignore
+#!.htaccess
+*~
+.~*
+
+# Mac OS X
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+.Spotlight-V100
+.Trashes
+
+# -- Packages ---------------------------------------------------------------------------
+# it's better to unpack these files and commit the raw source
+# git has its own built in compression methods
+*.7z
+*.dmg
+*.gz
+*.iso
+*.jar
+*.rar
+*.tar
+*.zip
+
+# -- Logs and databases -----------------------------------------------------------------
+*.log
+*.sql
+*.sqlite

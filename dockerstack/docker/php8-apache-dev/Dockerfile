@@ -52,6 +52,11 @@ RUN	docker-php-ext-configure gd --with-gd --with-jpeg-dir --with-png-dir --with-
 	pecl install memcached-3.1.5; \
 	docker-php-ext-enable memcached;
 
+RUN a2enmod expires \
+	&& a2enmod headers \
+	&& a2enmod rewrite \
+    && a2enmod ssl
+
 # Install composer & php-cs-fixer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 RUN curl -L https://cs.symfony.com/download/php-cs-fixer-v2.phar -o /usr/local/bin/php-cs-fixer && chmod a+x /usr/local/bin/php-cs-fixer

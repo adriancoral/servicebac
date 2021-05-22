@@ -64,10 +64,7 @@ class Handler extends ExceptionHandler
     {
         switch(class_basename($exception)) {
             case 'QueryException':
-                return $this->errorResponse('SQL complaint: '.$exception->getCode(), 500);
-            case 'TokenMismatchException':
-                return $this->errorResponse('Your request was denied. Please try again or reload your page', Response::HTTP_FORBIDDEN);
-                break;
+                return $this->errorResponse('SQL complaint: '.$exception->getCode().' - '.$exception->getMessage(), 500);
             case 'ModelNotFoundException':
                 $model = explode('\\', $exception->getModel());
                 $model = end($model);
@@ -76,6 +73,9 @@ class Handler extends ExceptionHandler
                 break;
             case 'NotFoundHttpException':
                 return $this->errorResponse('route_not_found', Response::HTTP_NOT_FOUND);
+                break;
+            case 'AuthorizationException':
+                return $this->errorResponse('only_json_content_type', Response::HTTP_BAD_REQUEST);
                 break;
             case 'AccessDeniedHttpException':
                 return $this->errorResponse('denied_access', Response::HTTP_UNAUTHORIZED);

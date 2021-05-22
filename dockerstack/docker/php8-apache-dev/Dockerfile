@@ -38,8 +38,7 @@ RUN set -ex; \
 
 # Install extensions
 RUN	docker-php-ext-install mysqli pdo_mysql;
-RUN	docker-php-ext-configure gd --with-gd --with-jpeg-dir --with-png-dir --with-zlib-dir; \
-    docker-php-ext-install -j "$(nproc)" \
+RUN docker-php-ext-install -j "$(nproc)" \
 		bcmath \
 		mbstring \
 		soap \
@@ -51,6 +50,9 @@ RUN	docker-php-ext-configure gd --with-gd --with-jpeg-dir --with-png-dir --with-
 		zip ; \
 	pecl install memcached-3.1.5; \
 	docker-php-ext-enable memcached;
+
+RUN	docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install -j$(nproc) gd;
 
 RUN a2enmod expires \
 	&& a2enmod headers \

@@ -1,6 +1,6 @@
 <?php
 
-use Illuminate\Http\Request;
+use App\Http\Controllers\pdf\PdfWorkController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,7 +13,12 @@ use Illuminate\Support\Facades\Route;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+Route::middleware(['api'])->prefix('pdf')->name('pdf.')->group(function () {
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
+    Route::get('/', [PdfWorkController::class, 'index'])->name('index');
+
+    Route::post('creator', [PdfWorkController::class, 'creator'])->name('creator');
+
+    Route::get('test', [PdfWorkController::class, 'test'])->name('test');
 });
+

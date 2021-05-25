@@ -3,7 +3,7 @@ services:
 
   service:
     build:
-      context: ./docker/php8-apache-dev
+      context: ./docker/php7.4.19-apache-buster-dev
     image: bac:service
     container_name: service
     hostname: service

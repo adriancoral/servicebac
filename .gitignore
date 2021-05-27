@@ -4,6 +4,7 @@
 /site/public/storage
 /site/public/js/app.js
 /site/public/css/app.css
+!site/storage/database/service.sqlite
 /site/storage/*.key
 /site/vendor
 /site/.env
@@ -15,7 +16,6 @@
 /dockerstack/etc/ssl/**/*
 !dockerstack/etc/ssl/.gitkepp
 
-!site/storage/database/service.sqlite
 
 npm-debug.log
 yarn-error.log

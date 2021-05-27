@@ -1,26 +1,20 @@
 <?php
 namespace App\Traits;
 
-
-use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 trait S3Manager
 {
     /**
-     * @param UploadedFile $file
-     * @return string
+     * @param $filePath
+     * @param $name
+     * @return bool
      */
-    protected function uploadFile(UploadedFile $file)
+    protected function uploadFile($filePath, $name): bool
     {
-        return Str::lower(config('filesystems.s3_aws_cdn')).$file->storeAs(
-            $this->getPath(),
-            $this->getName(),
-            's3'
-        );
+        return Storage::disk('s3')->put($this->getPath().$name, File::get($filePath));
     }
 
     /**
@@ -41,6 +35,10 @@ trait S3Manager
         return Str::lower(config('filesystems.s3_aws_pdf_path'));
     }
 
+    /**
+     * @param $name
+     * @return string
+     */
     protected function getUri($name): string
     {
         return Str::lower(config('filesystems.s3_aws_cdn')).$this->getPath().$name;

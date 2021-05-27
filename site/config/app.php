@@ -166,6 +166,7 @@ return [
          * Package Service Providers...
          */
         ZanySoft\LaravelPDF\PdfServiceProvider::class,
+        LynX39\LaraPdfMerger\PdfMergerServiceProvider::class,
         /*
          * Application Service Providers...
          */
@@ -227,7 +228,8 @@ return [
         'URL' => Illuminate\Support\Facades\URL::class,
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
-        'PDF' => ZanySoft\LaravelPDF\Facades\PDF::class
+        'PDF' => ZanySoft\LaravelPDF\Facades\PDF::class,
+        'PdfMerger' => LynX39\LaraPdfMerger\Facades\PdfMerger::class,
 
     ],
 

@@ -25,6 +25,8 @@ return [
     's3_aws_cdn' => env('S3_AWS_CDN', 'https://files.bookacorner.io/'),
     's3_aws_pdf_path' => 'pdf/',
 
+    'local_pdf_path' => '/pdf',
+
     /*
     |--------------------------------------------------------------------------
     | Filesystem Disks
@@ -40,9 +42,19 @@ return [
 
     'disks' => [
 
-        'local' => [
+        'localdisk' => [
             'driver' => 'local',
             'root' => storage_path('app'),
+            'permissions' => [
+                'file' => [
+                    'public' => 0666,
+                    'private' => 0666,
+                ],
+                'dir' => [
+                    'public' => 0777,
+                    'private' => 0755,
+                ],
+            ],
         ],
 
         'public' => [

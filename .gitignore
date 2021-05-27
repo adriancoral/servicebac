@@ -4,7 +4,6 @@
 /site/public/storage
 /site/public/js/app.js
 /site/public/css/app.css
-!site/storage/database/service.sqlite
 /site/storage/*.key
 /site/vendor
 /site/.env

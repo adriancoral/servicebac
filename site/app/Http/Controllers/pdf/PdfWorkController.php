@@ -8,8 +8,6 @@ use App\Http\Resources\PdfWorkResource;
 use App\Models\PdfWork;
 use App\Traits\PdfWorkManager;
 use App\Traits\S3Manager;
-use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Support\Facades\Http;
 
 class PdfWorkController extends Controller
 {

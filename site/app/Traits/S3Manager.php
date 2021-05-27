@@ -14,7 +14,7 @@ trait S3Manager
      */
     protected function uploadFile($filePath, $name): bool
     {
-        return Storage::disk('s3')->put($this->getPath().$name, File::get($filePath));
+        return Storage::disk('s3pdf')->put($this->getPath().$name, File::get($filePath));
     }
 
     /**
@@ -23,8 +23,8 @@ trait S3Manager
      */
     protected function deleteFile($fileUrl): bool
     {
-        $filePath = Str::after($fileUrl, config('filesystems.s3_aws_cdn'));
-        return Storage::disk('s3')->delete($filePath);
+        $filePath = Str::after($fileUrl, config('filesystems.s3_aws_pdf_cdn'));
+        return Storage::disk('s3pdf')->delete($filePath);
     }
 
     /**
@@ -32,7 +32,7 @@ trait S3Manager
      */
     protected function getPath(): string
     {
-        return Str::lower(config('filesystems.s3_aws_pdf_path'));
+        return Str::lower(config('filesystems.s3_aws_pdf_pdf_path'));
     }
 
     /**
@@ -41,7 +41,7 @@ trait S3Manager
      */
     protected function getUri($name): string
     {
-        return Str::lower(config('filesystems.s3_aws_cdn')).$this->getPath().$name;
+        return Str::lower(config('filesystems.s3_aws_pdf_cdn')).$this->getPath().$name;
     }
 
 }

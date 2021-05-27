@@ -22,7 +22,7 @@ return [
     |
     |
     */
-    's3_aws_cdn' => env('S3_AWS_CDN', 'https://files.bookacorner.io/'),
+    's3_aws_pdf_cdn' => env('S3_AWS_PDF_CDN', 'https://files.bookacorner.io/'),
     's3_aws_pdf_path' => 'pdf/',
 
     'local_pdf_path' => '/pdf',
@@ -64,12 +64,12 @@ return [
             'visibility' => 'public',
         ],
 
-        's3' => [
+        's3pdf' => [
             'driver' => 's3',
-            'key' => env('S3_AWS_ACCESS_KEY_ID'),
-            'secret' => env('S3_AWS_SECRET_ACCESS_KEY'),
-            'region' => env('S3_AWS_DEFAULT_REGION'),
-            'bucket' => env('S3_AWS_BUCKET'),
+            'key' => env('S3_AWS_PDF_ACCESS_KEY_ID'),
+            'secret' => env('S3_AWS_PDF_SECRET_ACCESS_KEY'),
+            'region' => env('S3_AWS_PDF_DEFAULT_REGION'),
+            'bucket' => env('S3_AWS_PDF_BUCKET'),
             //'url' => env('AWS_URL'),
             //'endpoint' => env('AWS_ENDPOINT'),
         ],

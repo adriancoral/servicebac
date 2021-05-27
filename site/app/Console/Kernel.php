@@ -13,7 +13,10 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        //
+        Commands\AppMigrate::class,
+        Commands\AppMigrateProduction::class,
+        Commands\CleanPdfFolder::class,
+        Commands\DeleteOldWorks::class
     ];
 
     /**

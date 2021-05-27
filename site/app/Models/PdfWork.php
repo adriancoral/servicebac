@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property mixed code
  * @property mixed payload
  * @method static findOrFail($workCode)
+ * @method static create(array $array)
  */
 class PdfWork extends Model
 {

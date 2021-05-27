@@ -5,6 +5,7 @@ namespace App\Exceptions;
 use App\Traits\ApiResponser;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Log;
 use Throwable;
 use Illuminate\Http\Response;
 use Illuminate\Http\Request;
@@ -62,6 +63,7 @@ class Handler extends ExceptionHandler
      */
     private function handleThrowable($request, Throwable $exception)
     {
+        Log::info('exception: '.class_basename($exception));
         switch(class_basename($exception)) {
             case 'QueryException':
                 return $this->errorResponse('SQL complaint: '.$exception->getCode().' - '.$exception->getMessage(), 500);

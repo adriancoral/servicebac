@@ -50,22 +50,7 @@ class PdfCreatorRequest extends FormRequest
             'templates.*.distinct' => __('A templates values must by unique'),
             'attachments.array' => __('A attachments field must by an array'),
             'attachments.*.url' => __('A attachments values must by an url'),
-            'callback.url' => 'A callback field must by an url'
+            'callback.url' => __('A callback field must by an url'),
         ];
     }
-
-    /**
-     * Configure the validator instance.
-     *
-     * @param  \Illuminate\Validation\Validator  $validator
-     * @return void
-     */
-    /*public function withValidator($validator)
-    {
-        $validator->after(function ($validator) {
-            if ($this->somethingElseIsInvalid()) {
-                $validator->errors()->add('field', 'Something is wrong with this field!');
-            }
-        });
-    }*/
 }

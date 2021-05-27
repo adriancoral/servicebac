@@ -17,6 +17,8 @@
 /dockerstack/etc/ssl/**/*
 !dockerstack/etc/ssl/.gitkepp
 
+!site/storage/database/service.sqlite
+
 npm-debug.log
 yarn-error.log
 

@@ -1,6 +1,4 @@
 # -- Application ---------------------------------------------------------------------------
-/site/public/tools
-!/site/public/tools/.gitkepp
 /site/node_modules
 /site/public/hot
 /site/public/storage

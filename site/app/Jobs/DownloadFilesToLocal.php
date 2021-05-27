@@ -18,7 +18,11 @@ use Illuminate\Support\Str;
 
 class DownloadFilesToLocal implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, PdfWorkManager;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
+    use PdfWorkManager;
 
     /**
      * The number of seconds the job can run before timing out.
@@ -28,8 +32,11 @@ class DownloadFilesToLocal implements ShouldQueue
     public $timeout = 360;
 
     public $workCode;
+
     public $fileUrl;
+
     public $payloadKey;
+
     public $order;
 
     /**
@@ -55,16 +62,15 @@ class DownloadFilesToLocal implements ShouldQueue
     public function handle()
     {
         try {
-
-            if (PdfWork::findOrFail($this->workCode)->status != 'in_progress'){
+            if (PdfWork::findOrFail($this->workCode)->status != 'in_progress') {
                 return false;
             }
 
-            if ($this->payloadKey == 'local-templates'){
+            if ($this->payloadKey == 'local-templates') {
                 $this->getHtmlFile();
             }
 
-            if ($this->payloadKey == 'local-attachments'){
+            if ($this->payloadKey == 'local-attachments') {
                 $this->getPdfFile();
             }
             DownloadedFinishedFile::dispatch($this->workCode);
@@ -80,7 +86,7 @@ class DownloadFilesToLocal implements ShouldQueue
     private function getHtmlFile()
     {
         $filename = $this->randomFileName().'.blade.php';
-        $dest = config('filesystems.local_pdf_path') . '/' . $this->workCode . '/' . $filename;
+        $dest = config('filesystems.local_pdf_path').'/'.$this->workCode.'/'.$filename;
 
         $file = @file_get_contents($this->fileUrl);
         if ($file) {
@@ -100,17 +106,17 @@ class DownloadFilesToLocal implements ShouldQueue
         $dest = config('filesystems.local_pdf_path').'/'.$this->workCode.'/'.$filename;
 
         $opts = [
-            "http" => [
-                "method" => "GET",
-                "header" => "User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:71.0) Gecko/20100101 Firefox/71.0\r\n"
-                    . "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8\r\n"
-                    . "Accept-Language: en-US,en;q=0.5\r\n"
-                    . "Accept-Encoding: gzip, deflate, br\r\n"
+            'http' => [
+                'method' => 'GET',
+                'header' => "User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:71.0) Gecko/20100101 Firefox/71.0\r\n"
+                    ."Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8\r\n"
+                    ."Accept-Language: en-US,en;q=0.5\r\n"
+                    ."Accept-Encoding: gzip, deflate, br\r\n",
             ],
         ];
 
         $context = stream_context_create($opts);
-        $data = file_get_contents( $this->fileUrl, false, $context);
+        $data = file_get_contents($this->fileUrl, false, $context);
 
         if ($data) {
             Storage::disk('localdisk')->put($dest, $data);

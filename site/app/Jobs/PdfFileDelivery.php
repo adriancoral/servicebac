@@ -6,18 +6,20 @@ use App\Traits\PdfWorkManager;
 use App\Traits\S3Manager;
 use Exception;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Http\File;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
-use phpDocumentor\Reflection\Types\True_;
 
 class PdfFileDelivery implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, PdfWorkManager, S3Manager;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
+    use PdfWorkManager;
+    use S3Manager;
 
     /**
      * The number of seconds the job can run before timing out.
@@ -25,11 +27,15 @@ class PdfFileDelivery implements ShouldQueue
      * @var int
      */
     public $timeout = 360;
+
     public $tries = 1;
+
     public $maxExceptions = 1;
 
     public $pdfWork;
+
     public $payload;
+
     public $workCode;
 
     /**
@@ -64,12 +70,12 @@ class PdfFileDelivery implements ShouldQueue
                     $pdfAttachments = $payload['local-attachments'];
                     $pdfAttachmentsOrdered = collect($pdfAttachments)->sortKeys();
 
-                    $filesToMerge = array_merge($pdfFromTemplatesOrdered->toArray(), $pdfAttachmentsOrdered->toArray()) ;
+                    $filesToMerge = array_merge($pdfFromTemplatesOrdered->toArray(), $pdfAttachmentsOrdered->toArray());
                 }
 
                 $finalFile = $this->mergePdf($filesToMerge, $this->workCode);
 
-                $file = $this->uploadFile($finalFile, $pdfWork->file_name);
+                $this->uploadFile($finalFile, $pdfWork->file_name);
 
                 CallBackResponse::dispatch($this->workCode, 'done')->delay(5);
                 return true;
@@ -78,6 +84,5 @@ class PdfFileDelivery implements ShouldQueue
             CallBackResponse::dispatch($this->workCode, 'fail', $exception->getMessage())->delay(5);
             return true;
         }
-
     }
 }

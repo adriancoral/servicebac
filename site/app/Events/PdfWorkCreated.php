@@ -10,9 +10,12 @@ use Illuminate\Support\Facades\Log;
 
 class PdfWorkCreated
 {
-    use Dispatchable, InteractsWithSockets, SerializesModels;
+    use Dispatchable;
+    use InteractsWithSockets;
+    use SerializesModels;
 
     public $pdfWork;
+
     /**
      * Create a new event instance.
      *

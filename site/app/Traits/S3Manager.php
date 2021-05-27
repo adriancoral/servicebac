@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Traits;
 
 use Illuminate\Support\Facades\File;
@@ -43,5 +44,4 @@ trait S3Manager
     {
         return Str::lower(config('filesystems.s3_aws_pdf_cdn')).$this->getPath().$name;
     }
-
 }

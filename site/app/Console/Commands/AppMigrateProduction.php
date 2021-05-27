@@ -38,9 +38,9 @@ class AppMigrateProduction extends Command
      */
     public function handle()
     {
-        $this->call('route:clear', ['--quiet' => true,]);
-        $this->call('config:cache', ['--quiet' => true,]);
-        $this->call('migrate', ['--force' => true,]);
+        $this->call('route:clear', ['--quiet' => true]);
+        $this->call('config:cache', ['--quiet' => true]);
+        $this->call('migrate', ['--force' => true]);
         $this->info('Successfully Migration.');
     }
 }

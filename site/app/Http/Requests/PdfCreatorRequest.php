@@ -24,13 +24,13 @@ class PdfCreatorRequest extends FormRequest
     public function rules()
     {
         return [
-            'content' =>  ['required', 'array', 'min:1'],
-            "content.*"  => ['required'],
-            'templates' =>  ['required', 'array', 'min:1'],
-            "templates.*"  => ['required', 'url', 'distinct', 'min:1'],
+            'content' => ['required', 'array', 'min:1'],
+            'content.*' => ['required'],
+            'templates' => ['required', 'array', 'min:1'],
+            'templates.*' => ['required', 'url', 'distinct', 'min:1'],
             'attachments' => ['nullable', 'array'],
             'attachments.*' => ['nullable', 'url', 'distinct', 'min:1'],
-            'callback' => ['nullable', 'url']
+            'callback' => ['nullable', 'url'],
         ];
     }
 

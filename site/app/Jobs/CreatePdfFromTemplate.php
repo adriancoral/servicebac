@@ -2,10 +2,9 @@
 
 namespace App\Jobs;
 
-use Exception;
-use Mpdf\MpdfException;
 use App\Events\FinishedPdfFile;
 use App\Traits\PdfWorkManager;
+use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -14,12 +13,17 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
+use Mpdf\MpdfException;
 use Mpdf\Output\Destination;
 use ZanySoft\LaravelPDF\PDF;
 
 class CreatePdfFromTemplate implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, PdfWorkManager;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
+    use PdfWorkManager;
 
     /**
      * The number of seconds the job can run before timing out.
@@ -53,7 +57,7 @@ class CreatePdfFromTemplate implements ShouldQueue
 
             $this->appendToPayload($this->workCode, 'local-templates-pdf', $pdfFiles);
             FinishedPdfFile::dispatch($this->workCode);
-        } catch (InvalidArgumentException | MpdfException | Exception $exception ) {
+        } catch (InvalidArgumentException | MpdfException | Exception $exception) {
             CallBackResponse::dispatch($this->workCode, 'fail', $exception->getMessage())->delay(5);
             return true;
         }
@@ -86,6 +90,5 @@ class CreatePdfFromTemplate implements ShouldQueue
             $pdfFiles[$order] = $destTemplateToPdf;
         }
         return $pdfFiles;
-
     }
 }

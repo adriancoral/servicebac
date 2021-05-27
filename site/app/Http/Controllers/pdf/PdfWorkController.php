@@ -11,7 +11,8 @@ use App\Traits\S3Manager;
 
 class PdfWorkController extends Controller
 {
-    use S3Manager, PdfWorkManager;
+    use S3Manager;
+    use PdfWorkManager;
 
     /**
      * @param PdfWork $pdfWork
@@ -40,7 +41,7 @@ class PdfWorkController extends Controller
             'file_name' => $fileName,
             'status' => 'in_progress',
             'link' => $this->getUri($fileName),
-            'callback' => $validatedData['callback']  ?? null
+            'callback' => $validatedData['callback'] ?? null,
         ]);
         return new PdfWorkResource($pdfProcess);
     }

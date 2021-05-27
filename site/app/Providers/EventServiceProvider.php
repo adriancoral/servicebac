@@ -5,8 +5,8 @@ namespace App\Providers;
 use App\Events\DownloadedFinishedFile;
 use App\Events\FinishedPdfFile;
 use App\Events\PdfWorkCreated;
-use App\Listeners\PdfMergeable;
 use App\Listeners\PdfMaker;
+use App\Listeners\PdfMergeable;
 use App\Listeners\PdfWorkGetSources;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
@@ -25,11 +25,11 @@ class EventServiceProvider extends ServiceProvider
             PdfWorkGetSources::class,
         ],
         DownloadedFinishedFile::class => [
-            PdfMaker::class
+            PdfMaker::class,
         ],
         FinishedPdfFile::class => [
-            PdfMergeable::class
-        ]
+            PdfMergeable::class,
+        ],
     ];
 
     /**

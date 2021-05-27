@@ -38,13 +38,13 @@ class AppMigrate extends Command
      */
     public function handle()
     {
-        if (app()->isLocal()){
-            $this->call('route:clear', ['--quiet' => true,]);
-            $this->call('config:cache', ['--quiet' => true,]);
+        if (app()->isLocal()) {
+            $this->call('route:clear', ['--quiet' => true]);
+            $this->call('config:cache', ['--quiet' => true]);
             $this->call('key:generate');
             $this->call('migrate:fresh');
             $this->call('db:seed');
-            $this->call('config:clear', ['--quiet' => true,]);
+            $this->call('config:clear', ['--quiet' => true]);
             $this->info('Successful Migration.');
         }
     }

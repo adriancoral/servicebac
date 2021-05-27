@@ -18,7 +18,7 @@ class PdfWorkResource extends JsonResource
     public function toArray($request): array
     {
         $body = [];
-        foreach (self::responseData() as $field){
+        foreach (self::responseData() as $field) {
             $body[$field] = $this->$field;
         }
         return $body;

@@ -1,12 +1,11 @@
 <?php
-namespace App\Traits;
 
+namespace App\Traits;
 
 use Illuminate\Http\JsonResponse;
 
 trait ApiResponser
 {
-
     /**
      * @param $data
      * @param int $code
@@ -26,5 +25,4 @@ trait ApiResponser
     {
         return response()->json(['success' => false, 'message' => $message], $code);
     }
-
 }

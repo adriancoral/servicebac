@@ -16,7 +16,7 @@ class Kernel extends ConsoleKernel
         Commands\AppMigrate::class,
         Commands\AppMigrateProduction::class,
         Commands\CleanPdfFolder::class,
-        Commands\DeleteOldWorks::class
+        Commands\DeleteOldWorks::class,
     ];
 
     /**

@@ -19,10 +19,16 @@ use Illuminate\Support\Facades\Log;
 
 class CallBackResponse implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, PdfWorkManager;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
+    use PdfWorkManager;
 
     public $workCode;
+
     public $message;
+
     public $status;
 
     /**
@@ -71,18 +77,18 @@ class CallBackResponse implements ShouldQueue
             $pdfWork = $this->getWork($this->workCode);
             $payload = json_decode($pdfWork->payload, true);
 
-            if (isset($payload['callback'])){
+            if (isset($payload['callback'])) {
                 $postUrl = $payload['callback'];
 
                 $data = PdfWorkResource::responseData();
-                foreach ($data as $field){
+                foreach ($data as $field) {
                     $body[$field] = $pdfWork->$field;
                 }
                 Http::post($postUrl, [
                     'headers' => [
-                        'Content-Type' => 'application/json'
+                        'Content-Type' => 'application/json',
                     ],
-                    'body' =>  $body,
+                    'body' => $body,
                 ]);
             }
             return true;

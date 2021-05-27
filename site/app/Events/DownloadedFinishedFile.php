@@ -9,7 +9,9 @@ use Illuminate\Support\Facades\Log;
 
 class DownloadedFinishedFile
 {
-    use Dispatchable, InteractsWithSockets, SerializesModels;
+    use Dispatchable;
+    use InteractsWithSockets;
+    use SerializesModels;
 
     public $workCode;
 

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Traits;
 
 use App\Models\PdfWork;
@@ -10,7 +11,6 @@ use LynX39\LaraPdfMerger\Facades\PdfMerger;
 
 trait PdfWorkManager
 {
-
     /**
      * @return string
      */
@@ -52,7 +52,7 @@ trait PdfWorkManager
         $filename = $this->randomFileName().'.pdf';
         $pdfFileMergedPath = storage_path().'/app/pdf/'.$workCode.'/'.$filename;
 
-        $pdfMerger->save($pdfFileMergedPath, "file");
+        $pdfMerger->save($pdfFileMergedPath, 'file');
 
         return $pdfFileMergedPath;
     }
@@ -102,8 +102,8 @@ trait PdfWorkManager
      */
     protected function hasTemplatesProcessed(array $payload): bool
     {
-        if (isset($payload['local-templates']) && count($payload['local-templates']) > 0){
-            if (isset($payload['local-templates-pdf']) && count($payload['local-templates-pdf']) > 0){
+        if (isset($payload['local-templates']) && count($payload['local-templates']) > 0) {
+            if (isset($payload['local-templates-pdf']) && count($payload['local-templates-pdf']) > 0) {
                 return true;
             } else {
                 return false;
@@ -118,7 +118,7 @@ trait PdfWorkManager
      */
     protected function hasLocalAttachments(array $payload): bool
     {
-        if (isset($payload['local-attachments']) && count($payload['local-attachments']) > 0){
+        if (isset($payload['local-attachments']) && count($payload['local-attachments']) > 0) {
             return true;
         }
         return false;
@@ -130,8 +130,8 @@ trait PdfWorkManager
      */
     private function hasFinishedDownloadingAttachments($payload): bool
     {
-        if (isset($payload['attachments'])){
-            if (count($payload['attachments']) == count($payload['local-attachments'])){
+        if (isset($payload['attachments'])) {
+            if (count($payload['attachments']) == count($payload['local-attachments'])) {
                 return true;
             } else {
                 return false;
@@ -140,14 +140,12 @@ trait PdfWorkManager
         return true;
     }
 
-
     /**
      * @param $payload
      * @return bool
      */
     private function hasFinishedDownloadingTemplates($payload): bool
     {
-        return (count($payload['templates']) == count($payload['local-templates']));
+        return count($payload['templates']) == count($payload['local-templates']);
     }
-
 }

@@ -5,14 +5,15 @@ namespace App\Exceptions;
 use App\Traits\ApiResponser;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
 use Throwable;
-use Illuminate\Http\Response;
-use Illuminate\Http\Request;
 
 class Handler extends ExceptionHandler
 {
     use ApiResponser;
+
     /**
      * A list of the exception types that are not reported.
      *
@@ -64,13 +65,13 @@ class Handler extends ExceptionHandler
     private function handleThrowable($request, Throwable $exception)
     {
         Log::info('exception: '.class_basename($exception));
-        switch(class_basename($exception)) {
+        switch (class_basename($exception)) {
             case 'QueryException':
                 return $this->errorResponse('SQL complaint: '.$exception->getCode().' - '.$exception->getMessage(), 500);
             case 'ModelNotFoundException':
                 $model = explode('\\', $exception->getModel());
                 $model = end($model);
-                $message = strtolower($model)."_not_found";
+                $message = strtolower($model).'_not_found';
                 return $this->errorResponse($message, Response::HTTP_NOT_FOUND);
                 break;
             case 'NotFoundHttpException':
@@ -86,19 +87,19 @@ class Handler extends ExceptionHandler
                 $errors = $exception->validator->errors()->getMessages();
                 return  $this->errorResponse($errors, Response::HTTP_UNPROCESSABLE_ENTITY);
             case 'Exception':
-                $code = (is_null($exception->getCode()) || $exception->getCode() == 0)? 500 : $exception->getCode() ;
+                $code = (is_null($exception->getCode()) || $exception->getCode() == 0) ? 500 : $exception->getCode();
                 return  $this->errorResponse($exception->getMessage(), $code);
                 break;
             case 'Error':
             default:
-                if (method_exists($exception, 'render')){
+                if (method_exists($exception, 'render')) {
                     return $exception->render($request);
                 } else {
                     if (method_exists($exception, 'getStatusCode')) {
                         $code = $exception->getStatusCode();
-                        $code = (is_null($code) || $code == 0)? 500 : $exception->getStatusCode();
+                        $code = (is_null($code) || $code == 0) ? 500 : $exception->getStatusCode();
                     } else {
-                        $code = (is_null($exception->getCode()) || $exception->getCode() == 0)? 500 : $exception->getCode() ;
+                        $code = (is_null($exception->getCode()) || $exception->getCode() == 0) ? 500 : $exception->getCode();
                     }
                     return  $this->errorResponse([$exception->getMessage(), $exception->getTrace()], $code);
                 }

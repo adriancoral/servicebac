@@ -2,6 +2,12 @@
 
 namespace App\Providers;
 
+use App\Events\DownloadedFinishedFile;
+use App\Events\FinishedPdfFile;
+use App\Events\PdfWorkCreated;
+use App\Listeners\PdfMergeable;
+use App\Listeners\PdfMaker;
+use App\Listeners\PdfWorkGetSources;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -15,9 +21,15 @@ class EventServiceProvider extends ServiceProvider
      * @var array
      */
     protected $listen = [
-        Registered::class => [
-            SendEmailVerificationNotification::class,
+        PdfWorkCreated::class => [
+            PdfWorkGetSources::class,
         ],
+        DownloadedFinishedFile::class => [
+            PdfMaker::class
+        ],
+        FinishedPdfFile::class => [
+            PdfMergeable::class
+        ]
     ];
 
     /**

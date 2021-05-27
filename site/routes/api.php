@@ -15,10 +15,8 @@ use Illuminate\Support\Facades\Route;
 */
 Route::middleware(['api'])->prefix('pdf')->name('pdf.')->group(function () {
 
-    Route::get('/', [PdfWorkController::class, 'index'])->name('index');
+    Route::get('status/{pdfWork}', [PdfWorkController::class, 'status'])->name('status');
 
     Route::post('creator', [PdfWorkController::class, 'creator'])->name('creator');
 
-    Route::get('test', [PdfWorkController::class, 'test'])->name('test');
 });
-

@@ -4,77 +4,46 @@ namespace App\Http\Controllers\pdf;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\PdfCreatorRequest;
+use App\Http\Resources\PdfWorkResource;
 use App\Models\PdfWork;
+use App\Traits\PdfWorkManager;
 use App\Traits\S3Manager;
-use Carbon\Carbon;
-use Illuminate\Http\Request;
-use Illuminate\Support\Str;
+use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Http;
 
 class PdfWorkController extends Controller
 {
-    use S3Manager;
+    use S3Manager, PdfWorkManager;
 
-    private $workCode = null;
-    private $fileName = null;
-
-    public function index(Request $request)
+    /**
+     * @param PdfWork $pdfWork
+     * @return PdfWorkResource
+     */
+    public function status(PdfWork $pdfWork): PdfWorkResource
     {
-        return response()->json(['hola' => 'mundo']);
+        return new PdfWorkResource($pdfWork);
     }
 
-    public function help()
-    {
-        return $this->successResponse([
-            'link' => '',
-            'callback' => '',
-            'status' => ''
-        ]);
-    }
-
-    public function creator(PdfCreatorRequest $request)
+    /**
+     * @param PdfCreatorRequest $request
+     * @return PdfWorkResource
+     */
+    public function creator(PdfCreatorRequest $request): PdfWorkResource
     {
         $validatedData = $request->validated();
+        $validatedData['local-templates'] = [];
+        $validatedData['local-attachments'] = [];
+
+        $workCode = $this->getWorkCode();
+        $fileName = $this->getFileName($workCode);
         $pdfProcess = PdfWork::create([
-            'code' => $this->getWorkCode(),
-            'payload' => serialize($validatedData),
-            'file_name' => $this->getFileName(),
+            'code' => $workCode,
+            'payload' => json_encode($validatedData),
+            'file_name' => $fileName,
             'status' => 'in_progress',
-            'link' => $this->getUri($this->fileName),
+            'link' => $this->getUri($fileName),
             'callback' => $validatedData['callback']  ?? null
         ]);
-        return $this->makeResponse($pdfProcess);
-
-    }
-
-    private function makeResponse(PdfWork $pdfProcess)
-    {
-        return $this->successResponse([
-            'link' => $pdfProcess->link,
-            'status' => $pdfProcess->status,
-            'message' => $pdfProcess->message,
-            'callback' => $pdfProcess->callback,
-        ]);
-    }
-
-    /**
-     * @return string
-     */
-    private function getWorkCode(): string
-    {
-        if (is_null($this->workCode)) {
-            $this->workCode = Str::random(10);
-        }
-        return $this->workCode;
-    }
-
-    /**
-     * @return string
-     */
-    private function getFileName(): string
-    {
-        if (is_null($this->fileName)){
-            $this->fileName = Str::lower($this->workCode.'-'.Carbon::now()->format('YMd-His').'.pdf');
-        }
-        return $this->fileName;
+        return new PdfWorkResource($pdfProcess);
     }
 }

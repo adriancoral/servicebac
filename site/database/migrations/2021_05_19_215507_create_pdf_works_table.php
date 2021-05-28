@@ -21,7 +21,7 @@ class CreatePdfWorksTable extends Migration
             $table->string('status');
             $table->string('message')->nullable();
             $table->string('link');
-            $table->string('callback');
+            $table->string('callback')->nullable();
             $table->timestamps();
         });
     }

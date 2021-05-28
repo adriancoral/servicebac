@@ -44,7 +44,7 @@ class CleanPdfFolder extends Command
         try {
             $pdfWorks = PdfWork::whereIn('status', ['done', 'fail'])->get();
             if ($pdfWorks->count()) {
-                foreach ($pdfWorks as $work){
+                foreach ($pdfWorks as $work) {
                     $directory = config('filesystems.local_pdf_path').'/'.$work->code;
                     Storage::disk('localdisk')->deleteDirectory($directory);
                     Log::info('Deleted working folder:'.$work->code);

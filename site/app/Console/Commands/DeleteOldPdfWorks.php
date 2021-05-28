@@ -45,7 +45,7 @@ class DeleteOldPdfWorks extends Command
             ->where('created_at', '<', $date)
             ->get();
         if ($pdfWorks->count()) {
-            foreach ($pdfWorks as $work){
+            foreach ($pdfWorks as $work) {
                 $work->delete();
                 Log::info('Deleted old work:'.$work->code);
             }

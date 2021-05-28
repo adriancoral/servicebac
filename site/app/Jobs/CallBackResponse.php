@@ -75,10 +75,9 @@ class CallBackResponse implements ShouldQueue
         try {
             $body = [];
             $pdfWork = $this->getWork($this->workCode);
-            $payload = json_decode($pdfWork->payload, true);
 
-            if (isset($payload['callback'])) {
-                $postUrl = $payload['callback'];
+            if (!is_null($pdfWork->callback)) {
+                $postUrl = $pdfWork->callback;
 
                 $data = PdfWorkResource::responseData();
                 foreach ($data as $field) {

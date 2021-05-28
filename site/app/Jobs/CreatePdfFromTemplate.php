@@ -50,15 +50,16 @@ class CreatePdfFromTemplate implements ShouldQueue
      *
      * @return bool
      */
-    public function handle()
+    public function handle(): bool
     {
         try {
             $pdfFiles = $this->createPdf();
 
             $this->appendToPayload($this->workCode, 'local-templates-pdf', $pdfFiles);
             FinishedPdfFile::dispatch($this->workCode);
+            return true;
         } catch (InvalidArgumentException | MpdfException | Exception $exception) {
-            CallBackResponse::dispatch($this->workCode, 'fail', $exception->getMessage())->delay(5);
+            CallBackResponse::dispatch($this->workCode, 'fail', $exception->getMessage())->delay(now()->addSeconds(5));
             return true;
         }
     }

@@ -56,16 +56,12 @@ class DownloadFilesToLocal implements ShouldQueue
     /**
      * Execute the job.
      *
-     * @return false|void
+     * @return true
      * @throws Exception
      */
     public function handle()
     {
         try {
-            if (PdfWork::findOrFail($this->workCode)->status != 'in_progress') {
-                return false;
-            }
-
             if ($this->payloadKey == 'local-templates') {
                 $this->getHtmlFile();
             }
@@ -74,8 +70,9 @@ class DownloadFilesToLocal implements ShouldQueue
                 $this->getPdfFile();
             }
             DownloadedFinishedFile::dispatch($this->workCode);
+            return true;
         } catch (Exception $exception) {
-            CallBackResponse::dispatch($this->workCode, 'fail', $exception->getMessage())->delay(5);
+            CallBackResponse::dispatch($this->workCode, 'fail', $exception->getMessage())->delay(now()->addSeconds(5));
             return true;
         }
     }

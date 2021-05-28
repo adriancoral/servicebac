@@ -22,7 +22,7 @@ class PdfMaker implements ShouldQueue
         $payload = json_decode($PdfWork->payload, true);
 
         if (isset($payload['local-templates'])) {
-            CreatePdfFromTemplate::dispatch($event->workCode)->delay(2);
+            CreatePdfFromTemplate::dispatch($event->workCode)->delay(now()->addSeconds(5));
         }
     }
 

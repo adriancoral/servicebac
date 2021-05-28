@@ -22,7 +22,7 @@ class PdfMergeable implements ShouldQueue
     public function handle(FinishedPdfFile $event)
     {
         Log::info('Exec PdfMergeable Listeners: '.$event->workCode);
-        PdfFileDelivery::dispatch($event->workCode)->delay(5);
+        PdfFileDelivery::dispatch($event->workCode)->delay(now()->addSeconds(5));
     }
 
     /**

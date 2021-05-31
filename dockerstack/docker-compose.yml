@@ -17,7 +17,7 @@ services:
       - "./etc/apache/000-default.conf:/etc/apache2/sites-enabled/000-default.conf"
       - "./etc/supervisor/:/etc/supervisor/conf.d/"
     ports:
-      - "80:80"
+      - "8081:80"
     networks:
       - app-network
 

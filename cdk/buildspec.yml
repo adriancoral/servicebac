@@ -1,0 +1,47 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      php: 7.4
+  pre_build: # commands to be run before build
+    commands:
+      - echo Logging in to Amazon ECR....
+      - aws --version
+      - REPOSITORY_URI=352725560891.dkr.ecr.us-east-1.amazonaws.com/bac/bac-services
+      # we should get the version somehow
+      - IMAGE_TAG=$BACKEND_TAG
+  build:
+    commands:
+      # login to Elastic container registry
+      - eval $(aws ecr get-login --region us-east-1 --no-include-email | sed 's|https://||')
+      - echo Build started on `date`
+      - cd site
+      - echo installing composer..
+      - composer install
+      - composer dumpautoload
+      - echo creating .env file..
+      - cp .env.example .env
+      - echo generating app key
+      - php artisan key:generate
+      - mkdir -p database
+      - touch database/database.sqlite
+      - php artisan test --parallel
+      #- DB_CONNECTION=sqlite DB_DATABASE=':memory:' bash -c 'php artisan devtool:freshmigrate'
+      - cd ..
+      - echo Building the Docker image...
+      - docker build -t $REPOSITORY_URI:latest -f dockerstack/docker/php7.4.19-apache-buster-prod/Dockerfile .
+      - docker tag $REPOSITORY_URI:latest $REPOSITORY_URI:$IMAGE_TAG
+  post_build:
+    commands:
+      - echo Build completed on `date`
+      - echo Pushing the Docker image...
+      - docker image ls -a
+      - eval $(aws ecr get-login --region us-east-1 --no-include-email | sed 's|https://||')
+      - docker push $REPOSITORY_URI:$IMAGE_TAG
+      - docker push $REPOSITORY_URI:latest
+
+artifacts:
+  base-directory: ./cdk
+  files:
+    - '**/*'

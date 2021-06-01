@@ -24,7 +24,6 @@ phases:
       - cp .env.example .env
       - echo generating app key
       - php artisan key:generate
-      - mkdir storage
       - mkdir storage/database
       - touch storage/database/service.sqlite
       #- php artisan test --parallel

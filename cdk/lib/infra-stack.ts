@@ -145,7 +145,7 @@ export class Infra extends CDK.Stack {
     
     const secretsAndEnvs : SecretAndEnvsProps = {
       environment: {
-        'DB_CONNECTION': 'mysql',
+        'DB_CONNECTION': 'sqlite',
         /*'DB_HOST': mySQLinstance.dbInstanceEndpointAddress,
         'DB_PORT': '3306',
         'DB_DATABASE': databaseName,

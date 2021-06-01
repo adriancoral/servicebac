@@ -76,4 +76,6 @@ ADD ./dockerstack/docker/php7.4.19-apache-buster-prod/startup.sh /etc/startup.sh
 # Set working directory
 WORKDIR /var/www
 
+EXPOSE 80
+
 ENTRYPOINT ["/usr/bin/supervisord", "-n", "-c",  "/etc/supervisord.conf"]

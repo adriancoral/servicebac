@@ -185,7 +185,7 @@ export class Infra extends CDK.Stack {
         cpu: 2048,
         ...secretsAndEnvs,
         image: appImageContainer,
-        healthCheck: {
+        healthCheck: {//#TECHDEBT health check
           command: ['CMD-SHELL', `curl -f https://google.com || exit 1`],
           interval: Duration.seconds(30),
           retries: 2,
@@ -215,7 +215,8 @@ export class Infra extends CDK.Stack {
       redirectHTTP: true,
       domainZone: myHostedZone,
       domainName,
-      //healthCheckGracePeriod: Duration.hours(15)
+      //#TECHDEBT base / return 200
+      healthCheckGracePeriod: Duration.hours(15)
     })
     
     this.service = alb.service;

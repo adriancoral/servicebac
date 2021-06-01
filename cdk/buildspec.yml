@@ -26,7 +26,7 @@ phases:
       - php artisan key:generate
       - mkdir -p database
       - touch database/database.sqlite
-      - php artisan test --parallel
+      #- php artisan test --parallel
       #- DB_CONNECTION=sqlite DB_DATABASE=':memory:' bash -c 'php artisan devtool:freshmigrate'
       - cd ..
       - echo Building the Docker image...

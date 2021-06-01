@@ -8,15 +8,21 @@ use Tests\TestCase;
 
 class PdfWorkTest extends TestCase
 {
-    /**
-     * A basic feature test example.
-     *
-     * @return void
-     */
-    public function test_example()
+    /** @test */
+    public function post_creator_entrega_respuesta_esperada()
     {
-        /*$response = $this->get('/');
+        $this->assertTrue(true);
+    }
 
-        $response->assertStatus(200);*/
+    /** @test */
+    public function post_creator_entrega_guarda_en_db()
+    {
+        $this->assertTrue(true);
+    }
+
+    /** @test */
+    public function get_staus_entrega_respuesta_esperada()
+    {
+        $this->assertTrue(true);
     }
 }

@@ -75,6 +75,8 @@ RUN curl -L https://cs.symfony.com/download/php-cs-fixer-v2.phar -o /usr/local/b
 RUN groupadd -r www -g 1000 && useradd -u 1000 -r -g www -m  www -s /bin/bash && \
     echo "alias t=vendor/bin/phpunit" >> /home/www/.bash_aliases
 
+# Copy existing application directory permissions
+RUN chown -R www-data:www-data /var/www
 # Set working directory
 WORKDIR /var/www
 

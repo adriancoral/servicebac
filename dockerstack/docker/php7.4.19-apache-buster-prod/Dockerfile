@@ -37,6 +37,7 @@ RUN set -ex; \
         mkdir -p /etc/supervisor/conf.d
 
 ADD ./dockerstack/etc/supervisor /etc/supervisor/conf.d/
+ADD ./site /var/www
 
 # Install extensions
 RUN	docker-php-ext-install mysqli pdo_mysql;

@@ -96,12 +96,6 @@ export class Infra extends CDK.Stack {
       allowAllOutbound: true,
     });
 
-    const rdsSecurityGroup = new EC2.SecurityGroup(this, 'RDSSecurityGruop', {
-      vpc,
-      description: 'RDS security group'
-    });
-    rdsSecurityGroup.addIngressRule(EC2.Peer.anyIpv4(), EC2.Port.tcp(3306), 'Allow connect to rds');
-
     // exporting security group
     this.securityGroup = mySecurityGroup;
 

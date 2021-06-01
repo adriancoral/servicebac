@@ -43,7 +43,8 @@ class AppMigrate extends Command
             $this->call('config:cache', ['--quiet' => true]);
             $this->call('key:generate');
             $this->call('migrate:fresh');
-            $this->call('db:seed');
+            // @todo crear un esquema de seeder para multiples servicios
+            //$this->call('db:seed');
             $this->call('config:clear', ['--quiet' => true]);
             $this->info('Successful Migration.');
         }

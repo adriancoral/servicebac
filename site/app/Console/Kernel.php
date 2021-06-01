@@ -27,7 +27,9 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')->hourly();
+        $schedule->command('pdf-service:clean-folder')->everyFifteenMinutes();
+
+        $schedule->command('pdf-service:delete-oldworks')->daily();
     }
 
     /**

@@ -37,6 +37,11 @@ RUN set -ex; \
         mkdir -p /etc/supervisor/conf.d
 
 ADD ./dockerstack/etc/supervisor /etc/supervisor/conf.d/
+ADD ./dockerstack/docker/php7.4.19-apache-buster-prod/supervisor.conf /etc/supervisord.conf
+
+ADD ./dockerstack/docker/php7.4.19-apache-buster-prod/startup.sh /etc/startup.sh
+ADD ./dockerstack/etc/php/local.ini /usr/local/etc/php/conf.d/local.ini
+ADD ./dockerstack/etc/apache/000-default.conf /etc/apache2/sites-enabled/000-default.conf
 ADD ./site /var/www
 
 # Install extensions
@@ -69,10 +74,6 @@ RUN curl -L https://cs.symfony.com/download/php-cs-fixer-v2.phar -o /usr/local/b
 # Add user for laravel application
 RUN groupadd -r www -g 1000 && useradd -u 1000 -r -g www -m  www -s /bin/bash && \
     echo "alias t=vendor/bin/phpunit" >> /home/www/.bash_aliases
-
-ADD ./dockerstack/docker/php7.4.19-apache-buster-prod/supervisor.conf /etc/supervisord.conf
-
-ADD ./dockerstack/docker/php7.4.19-apache-buster-prod/startup.sh /etc/startup.sh
 
 # Set working directory
 WORKDIR /var/www

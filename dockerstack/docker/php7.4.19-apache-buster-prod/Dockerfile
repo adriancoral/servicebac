@@ -1,4 +1,4 @@
-FROM php:7.4.19-apache-buster
+FROM public.ecr.aws/e9j0q2x3/bac/php-7.4.19-apache-buster
 
 LABEL maintainer="Adrian Coral <adriancoral@gmail.com>"
 

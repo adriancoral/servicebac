@@ -3,15 +3,15 @@
 
 # Book a Corner Service API
 
-Service API de bookacorner.com desarrollada en Laravel 8
+Bookacorner.com service API developed with Laravel 8
 
-## Inicio
+## Start
 
-Leer todo este archivo primero. Entorno utilizado en esta descripción Ubuntu 18.4
+Environment Ubuntu 18.4
 
-_Estas instrucciones te permitirán obtener una copia del proyecto en funcionamiento en tu máquina local para propósitos de desarrollo y testing._
+_This instructions will allow you to get a local working copy of this project to develop and testing._
 
-### Requisitos
+### Requirements
 
 -   Docker - [How to install](https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-18-04)
 -   Docker-compose - [How to install](https://www.digitalocean.com/community/tutorials/how-to-install-docker-compose-on-ubuntu-18-04)
@@ -44,77 +44,76 @@ _Estas instrucciones te permitirán obtener una copia del proyecto en funcionami
 ./composer.json
 ```
 
-### Instalación
+### Setup
 
-La primera vez se deben crear las imágenes docker, la ejecución puede tomar unos minutos,
-si la imagen base no se encuentra en el host, baja automáticamente y luego comienza la instalación de
-todos los paquetes indicados en el docker file. `dockerstack/docker/php7.4.19-apache-buster-dev/Dockerfile`
+At first, we should build docker images. Ejecution might take some minutes,
+if  the image is not in the host, it will automatically download and then the packets installation
+will take place from the docker file. `dockerstack/docker/php7.4.19-apache-buster-dev/Dockerfile`
 
-El puerto 80 TCP deben estar libre siempre que se arranque el contenedor, de lo contrario fallara
+TCP Port 8081 is being used
 
-Clonar este repositorio
+Clone this repo
 
 ```sh
 git clone git@github.com:Bookacorner/bac-services-api.git .
 
 ```
 
-Iniciar el stack de docker
+Start docker stack
 
 ```bash
 cd dockerstack
-# Primera ves
+# First time
 docker-compose up -d --build
 
-# Luego
+# Then
 docker-compose up -d
 
-# Detener los servicios
+# To stop services
 docker-compose down
 ```
 
-La aplicación se montara dentro del contenedor en /var/www/
+The app wil mount inside the container at /var/www
 
 ```bash
-#  docker ps: muestra los contenedores activos
+#  docker ps: shows active containers
 docker ps
 CONTAINER ID   IMAGE        COMMAND                 CREATED       STATUS        PORTS                               NAMES
 4f82bedc5820   bac:service  "/usr/bin/supervisor…"  3 hours ago   Up 3 hours    0.0.0.0:80->80/tcp, :::80->80/tcp   service
 ```
 
-### Configuración
+### Configuration
 
-Para instalar los paquetes de laravel hay que entrar al contendor y seguir los siguientes pasos
+To install laravel packets we need to get into the container and follow these steps
 
 ```bash
-# ingresar al contenedor con el usuario www
+# enter the container with user www
 docker exec -it -u www service /bin/bash
 
-#developer@zoho:
 composer install
 
-# Configurar laravel, la configuración para entorno local esta en env.example (sobreescribir el que crea laravel)
+# Configure laravel with env.example (sobreescribir el que crea laravel)
 cp env.example .env
 
-# Crear el archivo de base de datos
+# Create database file
 touch storage/database/service.sqlite 
 
 
-# Si todo esta bien, probamos el comando artisan
+# if everything is correct
 php artisan
 
-# Ejecutamos el comando para crear las tablas y
+# execute to create database tables
 php artisan devtool:freshmigrate
 
 ```
 
 ### Debug y logs
 
-Si hay errores de PHP se mostraran por el stdout del contenedor o en los logs,
-alternativamente y dependiendo de la configuración, se puede entrar al contenedor para ver otros logs
+If there are PHP errors, they will show in stdout container or logs,
+alernatively and depending on the config, we can enter the container to check logs
 
 ```bash
-# Ver logs con docker-composer, estando dentro de la carpeta dockerstack
+# Check container logs
 docker-compose logs -f
 
 # Logs con docker
@@ -127,47 +126,46 @@ docker exec -it [nombre-del-contenedor] /bin/bash
 
 ### Testing
 
-La app implementa test unitarios y features con PHPUnit.
+We implement Unit tests with PHP Unit
 
 [PHPUnit Manual](https://phpunit.readthedocs.io/en/9.3/index.html)
 
 [Laravel Mocking](https://laravel.com/docs/8.x/mocking)
 
 ```bash
-# Ingresar al contenedor PHP-FMP llamado app
+# Enter the container
 docker exec -it app /bin/bash
 
-# Ejecutar la suit
+# Execute la suit
 php artisan test --parallel # via laravel
 t                           # Alias para ./vendor/bin/phpunit 
 
-# Desde el host (fuera del contenedor)
+# From host
 docker exec -it app vendor/bin/phpunit
 
-# Ejecutar tests parciales
+# Partial tests
 t --filter=ExampleTest
 ./vendor/bin/phpunit --filter=ExampleTest
 ```
 
-## Servicio de PDF
+## PDF Service
 
-Este servicio tiene como objetivo renderizar templates de Blade y convertirlos a PDF, adicionalmente puede concatenar otros archivos PDF 
-enviados al resultado, una vez terminado el proceso sube el archivo a S3 y puede devolver una respuesta si le es proporcionada
+This service main purpose is to render Blade templates and convert them to PDF. It can also concatenate 
+other PDF files to result. Once the process is completed, the result is uplaoded to S3 and it can do a remote call.
 
 ### Endpoints
 
-**POST: /pdf/creator** admite 4 parámetros enviados en el cuerpo en formato json:
+**POST: /pdf/creator** admits 4 params as json:
 
-* `content` (requiere): objeto con la lista de pares clave/valor que se utilizan para popular los template blade
+* `content` (required): json object with key: value to populate blade template
   
-* `templates` (requiere): array de URLs con templates blade o cualquier URL que entrega como respuesta un HTML, en caso de ser mas de uno, 
-  seran convertidos a PDF en el orden proporcionado. 
+* `templates` (required): array with URLs templates or any URL that response is a HTML. They will be converted in the correct order.
 
-* `attachments` (nullable): array de URLs con archivos PDFs, que seran concatenados en el orden proporcionado
+* `attachments` (nullable): array URLs of PDFs file, concatenated in proper order
 
-* `callback` (nullable): URL donde se envia un POST informando el estado y la finalizacion de proceso. 
+* `callback` (nullable): URL to POST informing about the process success.
 
-POST de ejemplo
+example POST
 
 ```json
 {    
@@ -187,15 +185,15 @@ POST de ejemplo
 
 Response: 
 
-* code : codigo unico de proceso, se utiliza para consultar el estado 
+* code : process unique code. It's being used to consult process state
 
-* link : URL para obtener el archivo final
+* link : URL to get final file
   
-* status : estado de proceso in_progress | fail | done
+* status : process state in_progress | fail | done
   
-* message : En caso de fallar se informan detalles del fallo
+* message : In case of failure, a message
   
-* callback : URL a la que se enviara por POST esta misma respuesta cuando finalice el proceso 
+* callback : URL to POST informing about the process success.
 
 
 ```json
@@ -211,7 +209,7 @@ Response:
 }
 ```
 
-**GET: /pdf/status/[code]** Consultar el estado de un proceso  
+**GET: /pdf/status/[code]** Consult about a process 
 
 ```
 GET /pdf/status/ac9szznrzm
@@ -231,50 +229,46 @@ Response:
 }
 ```
 
-### Funcionamiento Interno
+### Internal function
 
-Todo el proceso es una cadena de eventos con jobs que hace el trabajo.
+The whole process is an event chain with jobs that complete the work.
 
-Al realizar un post este es validado por `PdfCreatorRequest` si pasa las validaciones se genera un insert en la tabla `pdf_works` 
-y se retorna la respuesta generada por `PdfWorkResource`.
+When creating a post, this is validated by `PdfCreatorRequest`, if it is valid, it will then generate an insert int the table `pdf_works` 
+y returns the response generated by `PdfWorkResource`.
 
-El modelo `PdfWork` correspondiente a la tabla, tiene un evento asociado al evento `created` de eloquent llamado `PdfWorkCreated`
+`PdfWork` model has an event associated to the `created` table event from eloquent called `PdfWorkCreated`
 
-`PdfWorkCreated` llama al listener `PdfWorkGetSources`, este determina la cantidad de archivos a bajar, ya sean templates o 
-PDF para adjuntar al resultado, por cada archivo que encuentra se dispara un job llamado `DownloadFilesToLocal`
+`PdfWorkCreated` calls `PdfWorkGetSources` listener, this determines the amount of files to download: templates or PDF files to concatenate. 
+Then each download will trigger a job called `DownloadFilesToLocal`
 
-`DownloadFilesToLocal` se ejecuta por cada archivo a bajar, almacena los mismos en `site/storage/app/pdf/[code]` al finalizar llama 
-el evento `DownloadedFinishedFile` 
+`DownloadFilesToLocal` executes for each file to download, it saves them into `site/storage/app/pdf/[code]` and when finished it calls `DownloadedFinishedFile` event.
 
-`DownloadedFinishedFile` llamara el listener `PdfMaker` por cada archivo bajado, este último determinara si han terminado de bajar 
-todos los archivos y dispara el Job  `CreatePdfFromTemplate`
+`DownloadedFinishedFile` will call `PdfMaker` listener for each downloaded file. The latter will know when all the files have been downloaded and it will trigger the Job `CreatePdfFromTemplate`.
 
-Cuando `CreatePdfFromTemplate` termina de generar el archivo llama al evento  `FinishedPdfFile`
+When `CreatePdfFromTemplate` finishes the file generation, it will call `FinishedPdfFile`.
 
-`FinishedPdfFile` llama al listener `PdfMergeable` este determina si ya están generados todos los PDF desde los templates 
-y dispara el job `PdfFileDelivery` 
+`FinishedPdfFile` calls the `PdfMergeable` listener and will know if all the files have been generated from templates and will trigger Job `PdfFileDelivery`.
 
-`PdfFileDelivery` Concatena (merge) todos los archivos PDFs y sube el archivo final con el nombre dado a S3, 
-luego dispara el job `CallBackResponse`
+`PdfFileDelivery` concatenates all PDF files and uploads the final file with the proper name to S3, then calls Job `CallBackResponse`.
 
-`CallBackResponse` determina si hay que enviar una respuesta en caso de ser propocionada la URL
+`CallBackResponse` determines if there is a URL to call on success provided by initial call
 
 ```php
 // EventServiceProvider
 protected $listen = [
-    // Se ejecuta con cada insert en la DB, esta asociado desde el modelo
+    // Executes on each DB insert, it's associated to the model
     PdfWorkCreated::class => [
-        // Determina que bajar y por cada archivo dispara DownloadFilesToLocal   
+        // Determines what to downlaod and for each file triggers DownloadFilesToLocal   
         PdfWorkGetSources::class,
     ],
-    // DownloadFilesToLocal llama a este evento por cada archivo terminado 
+    // DownloadFilesToLocal calls this event for each finished file
     DownloadedFinishedFile::class => [
-        // Es llamado por DownloadedFinishedFile y evalúa si bajaron todos los archivo, en caso de que si dispara  CreatePdfFromTemplate
+        // Called by DownloadedFinishedFile and evaluates if all files have been downloaded. If they are, it triggers CreatePdfFromTemplate
         PdfMaker::class,
     ],
-    // Es llamado por CreatePdfFromTemplate  al terminar
+    // Is called by CreatePdfFromTemplate  when finished
     FinishedPdfFile::class => [
-        //Es llamado por FinishedPdfFile, determina si todos los templates fueron convertidos a PDF, en caso de que si dispara el job PdfFileDelivery 
+        //Called by FinishedPdfFile, determines if all templates were already converted to PDF and triggers job PdfFileDelivery when they are
         PdfMergeable::class,
     ],
 ];
@@ -282,6 +276,6 @@ protected $listen = [
 
 ### Artisan Commands
 
-`pdf-service:clean-folder` Elimina los archivos temporales en `site/storage/app/pdf/`
+`pdf-service:clean-folder` Removes temp files in `site/storage/app/pdf/`
 
-`pdf-service:delete-oldworks` Elimina los trabajos terminados de la DB 
+`pdf-service:delete-oldworks` Removes finished jobs on DB

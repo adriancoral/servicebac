@@ -64,9 +64,9 @@ export class Infra extends CDK.Stack {
         maxAzs: 2,
       })
     );
-    
+
     const appRepository = ECR.Repository.fromRepositoryName(this, 'RepositoryApp', 'bac/bac-services');
-    
+
     const appImageContainer = ECS.ContainerImage.fromEcrRepository(appRepository, props.containerImage);
 
     const myHostedZone = Route53.HostedZone.fromHostedZoneAttributes(this, 'prev-hosted-zone', {
@@ -82,7 +82,7 @@ export class Infra extends CDK.Stack {
       machineImage: ECS.EcsOptimizedImage.amazonLinux2(),
       vpcSubnets: { subnetType: EC2.SubnetType.PUBLIC }
     });
-    
+
     const capacityProvider = new ECS.AsgCapacityProvider(this, 'AsgCapacityProvider', {
       autoScalingGroup,
     });
@@ -108,7 +108,7 @@ export class Infra extends CDK.Stack {
     const roleS3 = new IAM.Role(this, 'RoleS3', {
       assumedBy: new IAM.ServicePrincipal('s3.amazonaws.com'),
     });
-    
+
     /** Policys */
     const S3Policy = new IAM.PolicyStatement({
       effect: IAM.Effect.ALLOW,
@@ -142,7 +142,7 @@ export class Infra extends CDK.Stack {
     /** Permissions */
     taskDefinition.taskRole.attachInlinePolicy(policySes);
     taskDefinition.taskRole.attachInlinePolicy(policyS3);
-    
+
     const secretsAndEnvs : SecretAndEnvsProps = {
       environment: {
         'DB_CONNECTION': 'sqlite',
@@ -180,7 +180,7 @@ export class Infra extends CDK.Stack {
         ...secretsAndEnvs,
         image: appImageContainer,
         healthCheck: {//#TECHDEBT health check
-          command: ['CMD-SHELL', `curl -f https://google.com || exit 1`],
+          command: ['CMD-SHELL', `curl -f https://${domainName}/api/healthcheck || exit 1`],
           interval: Duration.seconds(30),
           retries: 2,
           startPeriod: Duration.minutes(2),
@@ -212,7 +212,7 @@ export class Infra extends CDK.Stack {
       //#TECHDEBT base / return 200
       healthCheckGracePeriod: Duration.hours(15)
     })
-    
+
     this.service = alb.service;
 
   }

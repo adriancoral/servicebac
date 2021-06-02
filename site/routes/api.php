@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\HealthCheckController;
 use App\Http\Controllers\pdf\PdfWorkController;
 use Illuminate\Support\Facades\Route;
 
@@ -15,6 +16,10 @@ use Illuminate\Support\Facades\Route;
 */
 Route::get('/', function () {
     return response()->json(['hola' => 'mundo']);
+});
+
+Route::middleware(['api'])->prefix('api')->group(function () {
+    Route::get('healthcheck', [HealthCheckController::class, 'healthcheck'])->name('healthcheck');
 });
 
 Route::middleware(['api'])->prefix('pdf')->name('pdf.')->group(function () {

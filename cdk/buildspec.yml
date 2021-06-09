@@ -30,6 +30,7 @@ phases:
       - echo Building the Docker image...
       - docker build -t $REPOSITORY_URI:latest -f dockerstack/docker/php7.4.19-apache-buster-prod/Dockerfile .
       - docker tag $REPOSITORY_URI:latest $REPOSITORY_URI:$IMAGE_TAG
+      - docker build -t $REPOSITORY_URI:artisan -f dockerstack/docker/php7.4.19-apache-buster-prod/artisan.Dockerfile .
   post_build:
     commands:
       - echo Build completed on `date`
@@ -38,6 +39,7 @@ phases:
       - eval $(aws ecr get-login --region us-east-1 --no-include-email | sed 's|https://||')
       - docker push $REPOSITORY_URI:$IMAGE_TAG
       - docker push $REPOSITORY_URI:latest
+      - docker push $REPOSITORY_URI:artisan
 
 artifacts:
   base-directory: ./cdk

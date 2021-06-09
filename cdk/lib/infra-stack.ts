@@ -68,6 +68,7 @@ export class Infra extends CDK.Stack {
     const appRepository = ECR.Repository.fromRepositoryName(this, 'RepositoryApp', 'bac/bac-services');
 
     const appImageContainer = ECS.ContainerImage.fromEcrRepository(appRepository, props.containerImage);
+    const artisanImageContainer = ECS.ContainerImage.fromEcrRepository(appRepository, 'artisan');
 
     const myHostedZone = Route53.HostedZone.fromHostedZoneAttributes(this, 'prev-hosted-zone', {
       hostedZoneId: props.hostzone.id,
@@ -139,6 +140,11 @@ export class Infra extends CDK.Stack {
       cpu: 4096
     });
 
+    const taskDefinitionArtisan = new ECS.FargateTaskDefinition(this, 'ServicesTDArtisan', {
+      memoryLimitMiB: 1024,
+      cpu: 512
+    });
+
     /** Permissions */
     taskDefinition.taskRole.attachInlinePolicy(policySes);
     taskDefinition.taskRole.attachInlinePolicy(policyS3);
@@ -186,6 +192,20 @@ export class Infra extends CDK.Stack {
           startPeriod: Duration.minutes(2),
           timeout: Duration.seconds(10)
         }
+      })
+      .addPortMappings({
+        containerPort: 80,
+        protocol: ECS.Protocol.TCP
+      })
+
+    taskDefinitionArtisan
+      .addContainer('artisan', {
+        logging: new ECS.AwsLogDriver({
+          streamPrefix: 'bac-app',
+          logRetention: Logs.RetentionDays.FIVE_DAYS
+        }),
+        ...secretsAndEnvs,
+        image: artisanImageContainer
       })
       .addPortMappings({
         containerPort: 80,

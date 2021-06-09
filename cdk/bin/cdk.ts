@@ -25,7 +25,7 @@ new Pipeline(app, 'services-pipeline', {
   github: {
     owner: 'Bookacorner',
     repository: 'bac-services-api',
-    branch: 'master'
+    branch: 'fix-migrations'
   },
   infraStack
 });

@@ -38,6 +38,7 @@ RUN set -ex; \
 
 ADD ./dockerstack/etc/supervisor /etc/supervisor/conf.d/
 ADD ./dockerstack/docker/php7.4.19-apache-buster-prod/supervisor.conf /etc/supervisord.conf
+ADD ./dockerstack/docker/php7.4.19-apache-buster-prod/run_supervisord.sh /opt/bin/run_supervisord.sh
 
 ADD ./dockerstack/docker/php7.4.19-apache-buster-prod/startup.sh /etc/startup.sh
 ADD ./dockerstack/etc/php/local.ini /usr/local/etc/php/conf.d/local.ini
@@ -82,4 +83,4 @@ WORKDIR /var/www
 
 EXPOSE 80
 
-ENTRYPOINT ["/usr/bin/supervisord", "-n", "-c",  "/etc/supervisord.conf"]
+ENTRYPOINT ["bash", "/opt/bin/run_supervisord.sh"]

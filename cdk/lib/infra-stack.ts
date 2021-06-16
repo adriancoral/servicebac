@@ -17,6 +17,9 @@ import * as ECSPatterns from '@aws-cdk/aws-ecs-patterns';
 import * as Cloudwatch from '@aws-cdk/aws-cloudwatch';
 import * as ELBV2 from '@aws-cdk/aws-elasticloadbalancingv2';
 import * as AutoScaling from '@aws-cdk/aws-autoscaling';
+import * as RDS from '@aws-cdk/aws-rds';
+
+import { DatabaseSecret } from '@aws-cdk/aws-rds';
 
 import { Duration, PhysicalName } from '@aws-cdk/core';
 
@@ -28,6 +31,8 @@ export interface InfraStackProps extends CDK.StackProps {
     id: string,
     name: string
   },
+  rdsSecretArn: string,
+  rdsIdentifier: string,
   vpc?: string,
 }
 
@@ -51,7 +56,7 @@ export class Infra extends CDK.Stack {
   constructor(scope: CDK.App, id: string, props: InfraStackProps) {
     super(scope, id, props);
 
-    const domainName = 'bac-services.bookacorner.io';
+    const domainName = 'services.bookacorner.io';
 
     const vpc = props.vpc ? (
       EC2.Vpc.fromLookup(this, `prev-vpc`, {
@@ -97,9 +102,39 @@ export class Infra extends CDK.Stack {
       allowAllOutbound: true,
     });
 
+    const rdsSecurityGroup = new EC2.SecurityGroup(this, 'RDSSecurityGruop', {
+      vpc,
+      description: 'RDS security group'
+    });
+    rdsSecurityGroup.addIngressRule(EC2.Peer.anyIpv4(), EC2.Port.tcp(3306), 'Allow connect to rds');
+
     // exporting security group
     this.securityGroup = mySecurityGroup;
 
+    /** Secrets */
+    const rdsSecret = DatabaseSecret.fromSecretArn(this, 'RDS-secret', props.rdsSecretArn);
+
+    /** Database */
+    const databaseName = 'services';
+    const databaseUser = rdsSecret.secretValueFromJson('username').toString(); // default one
+
+
+    const mySQLinstance = new RDS.DatabaseInstance(this, 'MySql', {
+      engine: RDS.DatabaseInstanceEngine.mysql({
+        version: RDS.MysqlEngineVersion.VER_5_7_26
+      }),
+      vpc,
+      instanceIdentifier: props.rdsIdentifier,
+      databaseName,
+      credentials: {
+        username: databaseUser,
+        password: rdsSecret.secretValueFromJson('password')
+      },
+      //vpcSubnets: { subnetType: EC2.SubnetType.PUBLIC },
+      securityGroups: [rdsSecurityGroup],
+      //cloudwatchLogsExports: ['error', 'general', 'slowquery', 'audit'],
+      instanceType: EC2.InstanceType.of(EC2.InstanceClass.BURSTABLE3, EC2.InstanceSize.MICRO),
+    });
 
     /** ROLEs */
     const role = new IAM.Role(this, 'RoleBig', {
@@ -152,12 +187,11 @@ export class Infra extends CDK.Stack {
     const secretsAndEnvs : SecretAndEnvsProps = {
       environment: {
         'DB_CONNECTION': 'sqlite',
-        /*'DB_HOST': mySQLinstance.dbInstanceEndpointAddress,
+        'DB_HOST': mySQLinstance.dbInstanceEndpointAddress,
         'DB_PORT': '3306',
         'DB_DATABASE': databaseName,
         'DB_USERNAME': databaseUser,
-        'DB_PASSWORD': ''
-        */
+        'DB_PASSWORD': rdsSecret.secretValueFromJson('password').toString(),
         'APP_ENV': 'production',
         'COMPOSE_HTTP_TIMEOUT': '180',
         // TODO: Importante.
@@ -235,5 +269,9 @@ export class Infra extends CDK.Stack {
 
     this.service = alb.service;
 
+    new CDK.CfnOutput(this, 'DBConnection', {
+      value: mySQLinstance.instanceEndpoint.socketAddress,
+      description: 'DB connection',
+    })
   }
 }

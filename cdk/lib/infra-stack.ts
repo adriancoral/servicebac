@@ -171,8 +171,8 @@ export class Infra extends CDK.Stack {
     // check in https://docs.aws.amazon.com/AmazonECS/latest/developerguide/application_architecture.html
     // to separate tasks in production
     const taskDefinition = new ECS.FargateTaskDefinition(this, 'ServicesTD', {
-      memoryLimitMiB: 8192,
-      cpu: 4096
+      memoryLimitMiB: 2048,
+      cpu: 512
     });
 
     const taskDefinitionArtisan = new ECS.FargateTaskDefinition(this, 'ServicesTDArtisan', {
@@ -186,7 +186,7 @@ export class Infra extends CDK.Stack {
 
     const secretsAndEnvs : SecretAndEnvsProps = {
       environment: {
-        'DB_CONNECTION': 'sqlite',
+        'DB_CONNECTION': 'mysql',
         'DB_HOST': mySQLinstance.dbInstanceEndpointAddress,
         'DB_PORT': '3306',
         'DB_DATABASE': databaseName,
@@ -215,8 +215,8 @@ export class Infra extends CDK.Stack {
           streamPrefix: 'bac-app',
           logRetention: Logs.RetentionDays.FIVE_DAYS
         }),
-        memoryLimitMiB: 1024,
-        cpu: 2048,
+        memoryLimitMiB: 2048,
+        cpu: 512,
         ...secretsAndEnvs,
         image: appImageContainer,
         healthCheck: {//#TECHDEBT health check

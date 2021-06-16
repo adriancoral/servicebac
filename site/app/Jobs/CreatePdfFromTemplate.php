@@ -76,10 +76,10 @@ class CreatePdfFromTemplate implements ShouldQueue
 
         $localTemplates = $payload['local-templates'];
         $content = $payload['content'];
-        config()->set(['view.paths' => [storage_path().'/app/pdf/'.$pdfWork->code]]);
+        //config()->set(['view.paths' => [storage_path().'/app/pdf/'.$pdfWork->code]]);
 
         foreach ($localTemplates as $order => $template) {
-            $bladeTemplate = Str::of(Str::afterLast($template, '/'))->before('.');
+            $bladeTemplate = $pdfWork->code.'.'.Str::of(Str::afterLast($template, '/'))->before('.');
 
             $pdf = new PDF();
             $pdf->loadView($bladeTemplate, $content);

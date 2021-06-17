@@ -56,7 +56,31 @@ Clone this repo
 
 ```sh
 git clone git@github.com:Bookacorner/bac-services-api.git .
+```
 
+Crea red externa
+
+Docker-compose utiliza una red externa llamada `bac-network` con una subnet particular:
+
+```bash
+# Motrar las redes actuales
+docker network ls 
+
+# Output
+NETWORK ID     NAME                       DRIVER    SCOPE
+8fd7f46956c8   bac-network                bridge    local
+4ba9c476a52d   bookacornerlocal_default   bridge    local
+72987c128f04   bridge                     bridge    local
+
+# Crear la red bac-network
+docker network create --driver=bridge --subnet=192.168.200.0/24  bac-network
+```
+
+Agregar host
+
+Se debe agregar `bacservice.local` a `/etc/hosts` (Linux OS)
+```bash
+127.0.1.1       bacservice.local
 ```
 
 Start docker stack

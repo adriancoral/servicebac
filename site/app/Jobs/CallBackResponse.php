@@ -12,6 +12,7 @@ use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Http\Client\RequestException;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Http;
@@ -56,6 +57,7 @@ class CallBackResponse implements ShouldQueue
                 ['code' => $this->workCode],
                 ['status' => $this->status, 'message' => $this->message]
             );
+            Log::info('Status: '.$this->status.', message: '.$this->message);
             $this->callBack();
         } catch (ConnectionException $exception) {
             Log::error('CallBack response fail: '.$exception->getMessage());
@@ -77,21 +79,30 @@ class CallBackResponse implements ShouldQueue
             $pdfWork = $this->getWork($this->workCode);
 
             if (!is_null($pdfWork->callback)) {
+                Log::info('Callback URL: '.$pdfWork->callback);
                 $postUrl = $pdfWork->callback;
 
                 $data = PdfWorkResource::responseData();
                 foreach ($data as $field) {
                     $body[$field] = $pdfWork->$field;
                 }
-                Http::post($postUrl, [
-                    'headers' => [
-                        'Content-Type' => 'application/json',
-                    ],
-                    'body' => $body,
-                ]);
+                $response = Http::withHeaders([
+                    'Content-Type' => 'application/json',
+                    'Accept' => 'application/json'
+                ])->post($postUrl, [
+                    'data' => $body,
+                ])->throw()->json();
+
+                if ($response->failed()) {
+                    Log::error('Response FAIL: '.json_encode($response));
+                }
+                Log::info('Response OK: '.json_encode($response));
+            } else {
+                Log::info('Response NO CALLBACK');
             }
             return true;
-        } catch (Exception $exception) {
+        } catch (Exception | RequestException $exception) {
+            Log::error('Exception FAIL: '.$exception->getMessage());
             throw new ConnectionException($exception->getMessage());
         }
     }

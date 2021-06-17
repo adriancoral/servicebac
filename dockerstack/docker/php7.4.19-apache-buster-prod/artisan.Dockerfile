@@ -83,4 +83,4 @@ WORKDIR /var/www
 
 EXPOSE 80
 
-ENTRYPOINT ["bash", "/opt/bin/run_supervisord.sh"]
+CMD ["echo", "your command"]

@@ -14,6 +14,8 @@ const infraStack = new Infra(app, 'services-stack', {
     id: 'Z04944581I6URJMSLZPD2',
     name: 'bookacorner.io'
   },
+  rdsIdentifier: 'services',
+  rdsSecretArn: 'arn:aws:secretsmanager:us-east-1:352725560891:secret:prod/services/DATABASE_CREDENTIALS-ERoRW6',
   env: {
     account: '352725560891',
     region: 'us-east-1'

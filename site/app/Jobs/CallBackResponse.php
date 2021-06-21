@@ -86,6 +86,8 @@ class CallBackResponse implements ShouldQueue
                 foreach ($data as $field) {
                     $body[$field] = $pdfWork->$field;
                 }
+                Log::info('BODY: '.json_encode($body));
+
                 $response = Http::withHeaders([
                     'Content-Type' => 'application/json',
                     'Accept' => 'application/json'
@@ -93,15 +95,12 @@ class CallBackResponse implements ShouldQueue
                     'data' => $body,
                 ])->throw()->json();
 
-                if ($response->failed()) {
-                    Log::error('Response FAIL: '.json_encode($response));
-                }
                 Log::info('Response OK: '.json_encode($response));
             } else {
                 Log::info('Response NO CALLBACK');
             }
             return true;
-        } catch (Exception | RequestException $exception) {
+        } catch (Exception $exception) {
             Log::error('Exception FAIL: '.$exception->getMessage());
             throw new ConnectionException($exception->getMessage());
         }

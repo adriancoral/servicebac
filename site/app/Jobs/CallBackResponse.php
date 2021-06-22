@@ -90,7 +90,7 @@ class CallBackResponse implements ShouldQueue
 
                 $response = Http::withHeaders([
                     'Content-Type' => 'application/json',
-                    'Accept' => 'application/json'
+                    'Accept' => 'application/json',
                 ])->post($postUrl, [
                     'data' => $body,
                 ])->throw()->json();

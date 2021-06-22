@@ -21,6 +21,10 @@ class PdfWorkResource extends JsonResource
         foreach (self::responseData() as $field) {
             $body[$field] = $this->$field;
         }
+
+        $body['started_process'] = $this->created_at;
+        $body['finished_process'] = $this->updated_at;
+
         return $body;
     }
 

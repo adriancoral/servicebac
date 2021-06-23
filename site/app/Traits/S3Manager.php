@@ -33,7 +33,7 @@ trait S3Manager
      */
     protected function getPath(): string
     {
-        return Str::lower(config('filesystems.s3_aws_pdf_pdf_path'));
+        return Str::lower(config('filesystems.s3_aws_pdf_path'));
     }
 
     /**

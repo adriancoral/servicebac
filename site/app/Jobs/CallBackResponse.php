@@ -10,6 +10,7 @@ use HttpException;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\RequestException;
@@ -17,6 +18,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 class CallBackResponse implements ShouldQueue
 {
@@ -55,15 +57,17 @@ class CallBackResponse implements ShouldQueue
         try {
             $work = PdfWork::updateOrCreate(
                 ['code' => $this->workCode],
-                ['status' => $this->status, 'message' => $this->message]
+                ['status' => $this->status, 'message' => Str::of($this->message)->limit(200)]
             );
             Log::info('Status: '.$this->status.', message: '.$this->message);
             $this->callBack();
         } catch (ConnectionException $exception) {
             Log::error('CallBack response fail: '.$exception->getMessage());
             return true;
+        } catch (QueryException $exception) {
+            Log::error('Query Exception: '.$exception->getMessage());
         } catch (Exception $exception) {
-            Log::error('Last update work fail: '.$exception->getMessage());
+            Log::error('General Exception: last update work fail: '.$exception->getMessage());
             return true;
         }
     }

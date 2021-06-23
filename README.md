@@ -110,6 +110,12 @@ CONTAINER ID   IMAGE        COMMAND                 CREATED       STATUS        
 
 To install laravel packets we need to get into the container and follow these steps
 
+Create a database on your MySQL server
+
+```sql
+CREATE DATABASE `bacservice` COLLATE 'utf8mb4_unicode_ci';
+```
+
 ```bash
 # enter the container with user www
 docker exec -it -u www service /bin/bash
@@ -119,8 +125,8 @@ composer install
 # Configure laravel with env.example (sobreescribir el que crea laravel)
 cp env.example .env
 
-# Create database file
-touch storage/database/service.sqlite 
+# Configure environment
+vi .env 
 
 
 # if everything is correct

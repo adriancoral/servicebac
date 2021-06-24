@@ -16,6 +16,7 @@ const infraStack = new Infra(app, 'services-stack', {
   },
   rdsIdentifier: 'services',
   rdsSecretArn: 'arn:aws:secretsmanager:us-east-1:352725560891:secret:prod/services/DATABASE_CREDENTIALS-ERoRW6',
+  vpc: 'vpc-022e061111161ce04',
   env: {
     account: '352725560891',
     region: 'us-east-1'

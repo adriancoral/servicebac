@@ -195,11 +195,16 @@ to explore a deployed rule set and configuration, see `site/.php_cs`
 docker exec -it  -u www service /bin/bash
 
 # Show the list of files and their modifications, without updating any files
-php-cs-fixer fix --dry-run --diff
+vendor/bin/php-cs-fixer fix --dry-run --diff
 
 # Fix all files 
-php-cs-fixer fix
+vendor/bin/php-cs-fixer fix
 ```
+
+Additionally, the plugin for .editorconfig must be activated in the IDE of our preference
+
+- [editorconfig](https://editorconfig.org/)
+
 
 ## PDF Service
 

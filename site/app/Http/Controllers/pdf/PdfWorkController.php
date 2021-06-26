@@ -45,9 +45,4 @@ class PdfWorkController extends Controller
         ]);
         return new PdfWorkResource($pdfProcess);
     }
-
-    public function testPhpCSFixer($algo){
-        if($algo)
-            return true;
-    }
 }

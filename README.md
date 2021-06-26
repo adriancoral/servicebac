@@ -171,7 +171,11 @@ php artisan test
 php artisan test --parallel
 
 # Run Partial test
-t  # Alias para ./vendor/bin/phpunit 
+vendor/bin/phpunit
+vendor/bin/phpunit --filter=PdfWorkTest
+
+# Alias para ./vendor/bin/phpunit
+t   
 t --filter=PdfWorkTest
 
 # Testing from host
@@ -179,6 +183,8 @@ docker exec -it  -u www service php artisan test
 
 docker exec -it -u www service vendor/bin/phpunit
 
+# PhpUnit CLI Options
+# https://phpunit.readthedocs.io/en/9.3/textui.html#command-line-options
 ```
 
 ### Coding standard

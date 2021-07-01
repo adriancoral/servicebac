@@ -25,7 +25,6 @@ class PdfCreatorRequest extends FormRequest
     {
         return [
             'content' => ['required', 'array', 'min:1'],
-            'content.*' => ['required'],
             'templates' => ['required', 'array', 'min:1'],
             'templates.*' => ['required', 'url', 'distinct', 'min:1'],
             'attachments' => ['nullable', 'array'],

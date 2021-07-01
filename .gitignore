@@ -10,7 +10,6 @@
 /site/.env.backup
 /site/.phpunit.result.cache
 /site/.php_cs.cache
-site/.php-cs-fixer.cache
 /dockerstack/etc/ssl
 
 /dockerstack/etc/ssl/**/*

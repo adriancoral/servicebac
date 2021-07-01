@@ -163,20 +163,54 @@ We implement Unit tests with PHP Unit
 [Laravel Mocking](https://laravel.com/docs/8.x/mocking)
 
 ```bash
-# Enter the container
-docker exec -it app /bin/bash
+# Testing into container
+docker exec -it  -u www service /bin/bash
 
-# Execute la suit
-php artisan test --parallel # via laravel
-t                           # Alias para ./vendor/bin/phpunit 
+# Run all suit
+php artisan test 
+php artisan test --parallel
 
-# From host
-docker exec -it app vendor/bin/phpunit
+# Run Partial test
+vendor/bin/phpunit
+vendor/bin/phpunit --filter=PdfWorkTest
 
-# Partial tests
-t --filter=ExampleTest
-./vendor/bin/phpunit --filter=ExampleTest
+# Alias para ./vendor/bin/phpunit
+t   
+t --filter=PdfWorkTest
+
+# Testing from host
+docker exec -it  -u www service php artisan test
+
+docker exec -it -u www service vendor/bin/phpunit
+
+# PhpUnit CLI Options
+# https://phpunit.readthedocs.io/en/9.3/textui.html#command-line-options
 ```
+
+### Coding standard
+
+We implement php-cs-fixer, this tool to be executed before unit test, to ensure a proper fixing, 
+to explore a deployed rule set and configuration, see `site/.php_cs`
+
+- [PHP-CS-Fixer](https://github.com/FriendsOfPHP/PHP-CS-Fixer)
+- [All Rules](https://github.com/FriendsOfPHP/PHP-CS-Fixer/blob/2.18/doc/rules/index.rst)
+- [PRS12](https://github.com/FriendsOfPHP/PHP-CS-Fixer/blob/2.18/doc/ruleSets/PSR12.rst)
+
+```bash
+# Run into container
+docker exec -it  -u www service /bin/bash
+
+# Show the list of files and their modifications, without updating any files
+vendor/bin/php-cs-fixer fix --dry-run --diff
+
+# Fix all files 
+vendor/bin/php-cs-fixer fix
+```
+
+Additionally, the plugin for .editorconfig must be activated in the IDE of our preference
+
+- [editorconfig](https://editorconfig.org/)
+
 
 ## PDF Service
 

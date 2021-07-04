@@ -340,6 +340,12 @@ protected $listen = [
 
 ### Artisan Commands
 
-`pdf-service:clean-folder` Removes temp files in `site/storage/app/pdf/`
+Run every Fifteen minutes `pdf-service:clean-folder` Removes temp files in `site/storage/app/pdf/`
 
-`pdf-service:delete-oldworks` Removes finished jobs on DB
+Run every Fifteen minutes `pdf-service:cancel-exceeded-time-pdfworks` search Jobs with in_progress status and change to fail if last update time is higher to 15 min
+
+Run every Thirty minutes `pdf-service:clean-failed-jobs_db`  Clean failed_jobs table 
+
+Run daily `pdf-service:delete-old-pdfworks` Delete any pdfworks older than 24 hours
+
+    

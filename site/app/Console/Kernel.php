@@ -18,7 +18,7 @@ class Kernel extends ConsoleKernel
         Commands\CleanPdfFolder::class,
         Commands\DeleteOldPdfWorks::class,
         Commands\CancelExceededTimePdfWorks::class,
-        Commands\CleanFailedJobsDb::class
+        Commands\CleanFailedJobsDb::class,
     ];
 
     /**

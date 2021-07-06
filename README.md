@@ -1,5 +1,7 @@
 <p align="center"><img src="https://files.bookacorner.io/all/logo-stycky2.png" width="400" alt="Book a Corner"></p>
 
+![PHP-CS-Fixer](https://github.com/Bookacorner/bac-services-api/actions/workflows/php-cs-fixer.yml/badge.svg?branch=master)
+![Laravel-Testing](https://github.com/Bookacorner/bac-services-api/actions/workflows/laravel_testing.yml/badge.svg?branch=master)
 
 # Book a Corner Service API
 

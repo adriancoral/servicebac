@@ -1,9 +1,9 @@
-FROM public.ecr.aws/e9j0q2x3/bac/php-7.4.19-apache-buster
+FROM public.ecr.aws/e9j0q2x3/bac/php-7.4.apache-buster:21
 
 LABEL maintainer="Adrian Coral <adriancoral@gmail.com>"
 
 LABEL so.debian="buster"
-LABEL php="7.4.19"
+LABEL php="7.4.21"
 
 # persistent dependencies
 RUN set -eux; \

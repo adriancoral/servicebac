@@ -7,21 +7,21 @@ use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 
-class DeleteOldPdfWorks extends Command
+class CancelExceededTimePdfWorks extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'pdf-service:delete-old-pdfworks';
+    protected $signature = 'pdf-service:cancel-exceeded-time-pdfworks';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Delete any pdfworks older than 24 hours';
+    protected $description = 'Search PdfWord with in_progress after 15 min and pass to failed';
 
     /**
      * Create a new command instance.
@@ -40,14 +40,15 @@ class DeleteOldPdfWorks extends Command
      */
     public function handle(): int
     {
-        $date = Carbon::now()->subHours(24);
-        $pdfWorks = PdfWork::whereIn('status', ['done', 'fail'])
-            ->where('created_at', '<', $date)
+        $date = Carbon::now()->subMinutes(15);
+        $this->info('Start time: '.$date->format('H:i:s - Y-m-d'));
+        $pdfWorks = PdfWork::where('status', 'in_progress')
+            ->where('updated_at', '<', $date)
             ->get();
         if ($pdfWorks->count()) {
             foreach ($pdfWorks as $work) {
-                $work->delete();
-                Log::info('Deleted old pdfworks:'.$work->code);
+                $work->update(['status' => 'fail']);
+                Log::info('Cancel exceeded time jobs: '.$work->code.', Last updated_at: '.$work->updated_at->format('H:i:s - Y-m-d'));
             }
         }
         return 0;

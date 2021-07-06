@@ -2,26 +2,26 @@
 
 namespace App\Console\Commands;
 
-use App\Models\PdfWork;
-use Carbon\Carbon;
+use App\Models\FailedJob;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
-class DeleteOldPdfWorks extends Command
+class CleanFailedJobsDb extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'pdf-service:delete-old-pdfworks';
+    protected $signature = 'pdf-service:clean-failed-jobs_db';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Delete any pdfworks older than 24 hours';
+    protected $description = 'Clean failed_jobs table';
 
     /**
      * Create a new command instance.
@@ -40,15 +40,11 @@ class DeleteOldPdfWorks extends Command
      */
     public function handle(): int
     {
-        $date = Carbon::now()->subHours(24);
-        $pdfWorks = PdfWork::whereIn('status', ['done', 'fail'])
-            ->where('created_at', '<', $date)
-            ->get();
-        if ($pdfWorks->count()) {
-            foreach ($pdfWorks as $work) {
-                $work->delete();
-                Log::info('Deleted old pdfworks:'.$work->code);
-            }
+        $jobs = FailedJob::All();
+        if ($jobs->count()) {
+            DB::table('failed_jobs')->truncate();
+
+            Log::warning('Delete #'.$jobs->count().' records at failed_jobs table');
         }
         return 0;
     }

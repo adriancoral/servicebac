@@ -12,6 +12,7 @@
 /site/.php_cs.cache
 /site/.php-cs-fixer.cache
 /dockerstack/etc/ssl
+.php-cs-fixer.cache
 
 /dockerstack/etc/ssl/**/*
 !dockerstack/etc/ssl/.gitkepp

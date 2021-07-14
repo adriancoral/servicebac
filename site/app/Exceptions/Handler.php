@@ -91,7 +91,7 @@ class Handler extends ExceptionHandler
                 $code = (is_null($exception->getCode()) || $exception->getCode() == 0) ? 500 : $exception->getCode();
                 return  $this->errorResponse($exception->getMessage(), $code);
                 break;
-            case 'Error':
+            case 'ErrorException':
             default:
                 if (method_exists($exception, 'render')) {
                     return $exception->render($request);
@@ -102,7 +102,7 @@ class Handler extends ExceptionHandler
                     } else {
                         $code = (is_null($exception->getCode()) || $exception->getCode() == 0) ? 500 : $exception->getCode();
                     }
-                    return  $this->errorResponse([$exception->getMessage(), $exception->getTrace()], $code);
+                    return  $this->errorResponse([$exception->getMessage(), $exception->getTraceAsString()], $code);
                 }
         }
     }

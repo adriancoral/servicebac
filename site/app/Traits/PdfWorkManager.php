@@ -2,9 +2,14 @@
 
 namespace App\Traits;
 
+use App\Http\Resources\PdfWorkResource;
 use App\Models\PdfWork;
 use Carbon\Carbon;
+use Exception;
+use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use LynX39\LaraPdfMerger\Facades\PdfMerger;
@@ -55,6 +60,38 @@ trait PdfWorkManager
         $pdfMerger->save($pdfFileMergedPath, 'file');
 
         return $pdfFileMergedPath;
+    }
+
+    /**
+     * @return mixed
+     * @throws ConnectionException|RequestException
+     */
+    protected function callBack(PdfWork $pdfWork)
+    {
+        $body = [];
+        if (!is_null($pdfWork->callback)) {
+            Log::info('Callback URL: '.$pdfWork->callback);
+            $postUrl = $pdfWork->callback;
+
+            $data = PdfWorkResource::responseData();
+            foreach ($data as $field) {
+                $body[$field] = $pdfWork->$field;
+            }
+            Log::info('BODY: '.json_encode($body));
+
+            $response = Http::withHeaders([
+                'Content-Type' => 'application/json',
+                'Accept' => 'application/json',
+            ])->post($postUrl, [
+                'data' => $body,
+            ]);
+
+            Log::info('Response Status: '.$response->status());
+
+            return $response->json();
+        }
+        Log::info('Response NO CALLBACK');
+        return false;
     }
 
     /**

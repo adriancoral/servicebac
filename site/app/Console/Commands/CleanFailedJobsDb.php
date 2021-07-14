@@ -24,16 +24,6 @@ class CleanFailedJobsDb extends Command
     protected $description = 'Clean failed_jobs table';
 
     /**
-     * Create a new command instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
-    /**
      * Execute the console command.
      *
      * @return int
@@ -43,7 +33,6 @@ class CleanFailedJobsDb extends Command
         $jobs = FailedJob::All();
         if ($jobs->count()) {
             DB::table('failed_jobs')->truncate();
-
             Log::warning('Delete #'.$jobs->count().' records at failed_jobs table');
         }
         return 0;

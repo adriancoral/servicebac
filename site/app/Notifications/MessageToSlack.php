@@ -16,7 +16,6 @@ class MessageToSlack extends Notification
 
     public $attachment;
 
-
     /**
      * Create a new notification instance.
      *

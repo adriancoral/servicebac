@@ -72,7 +72,7 @@ class DownloadFilesToLocal implements ShouldQueue
             DownloadedFinishedFile::dispatch($this->workCode);
             return true;
         } catch (Exception $exception) {
-            CallBackResponse::dispatch($this->workCode, 'fail', $exception->getMessage())->delay(now()->addSeconds(5));
+            UpdateStatus::dispatch($this->workCode, 'fail', $exception->getMessage())->delay(now()->addSeconds(5));
             return true;
         }
     }

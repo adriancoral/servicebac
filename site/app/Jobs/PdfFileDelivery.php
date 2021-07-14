@@ -77,11 +77,11 @@ class PdfFileDelivery implements ShouldQueue
 
                 $this->uploadFile($finalFile, $pdfWork->file_name);
 
-                CallBackResponse::dispatch($this->workCode, 'done')->delay(now()->addSeconds(5));
+                UpdateStatus::dispatch($this->workCode, 'done')->delay(now()->addSeconds(5));
                 return true;
             }
         } catch (Exception $exception) {
-            CallBackResponse::dispatch($this->workCode, 'fail', $exception->getMessage())->delay(now()->addSeconds(5));
+            UpdateStatus::dispatch($this->workCode, 'fail', $exception->getMessage())->delay(now()->addSeconds(5));
             return true;
         }
     }

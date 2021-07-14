@@ -59,7 +59,7 @@ class CreatePdfFromTemplate implements ShouldQueue
             FinishedPdfFile::dispatch($this->workCode);
             return true;
         } catch (InvalidArgumentException | MpdfException | Exception $exception) {
-            CallBackResponse::dispatch($this->workCode, 'fail', $exception->getMessage())->delay(now()->addSeconds(5));
+            UpdateStatus::dispatch($this->workCode, 'fail', $exception->getMessage())->delay(now()->addSeconds(5));
             return true;
         }
     }

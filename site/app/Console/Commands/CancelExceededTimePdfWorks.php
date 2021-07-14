@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Jobs\UpdateStatus;
 use App\Models\PdfWork;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
@@ -21,17 +22,7 @@ class CancelExceededTimePdfWorks extends Command
      *
      * @var string
      */
-    protected $description = 'Search PdfWord with in_progress after 15 min and pass to failed';
-
-    /**
-     * Create a new command instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        parent::__construct();
-    }
+    protected $description = 'Search PdfWork with in_progress after 15 min and pass to failed';
 
     /**
      * Execute the console command.
@@ -47,7 +38,7 @@ class CancelExceededTimePdfWorks extends Command
             ->get();
         if ($pdfWorks->count()) {
             foreach ($pdfWorks as $work) {
-                $work->update(['status' => 'fail']);
+                UpdateStatus::dispatch($work->code, 'fail', $this->signature)->delay(now()->addSeconds(5));
                 Log::info('Cancel exceeded time jobs: '.$work->code.', Last updated_at: '.$work->updated_at->format('H:i:s - Y-m-d'));
             }
         }

@@ -315,9 +315,13 @@ When `CreatePdfFromTemplate` finishes the file generation, it will call `Finishe
 
 `FinishedPdfFile` calls the `PdfMergeable` listener and will know if all the files have been generated from templates and will trigger Job `PdfFileDelivery`.
 
-`PdfFileDelivery` concatenates all PDF files and uploads the final file with the proper name to S3, then calls Job `CallBackResponse`.
+`PdfFileDelivery` concatenates all PDF files and uploads the final file with the proper name to S3, then calls Job `UpdateStatus`.
 
-`CallBackResponse` determines if there is a URL to call on success provided by initial call
+`UpdateStatus` can be called at any moment from any other job,  will just updated status field and call `CallBackResponse`
+
+`CallBackResponse` determines if there is a URL to call on success provided by initial call, 
+
+`CallBackResponse` will be executed again in 5 min in case of not obtaining a 200 response, for 3 times 
 
 ```php
 // EventServiceProvider
@@ -345,6 +349,8 @@ protected $listen = [
 Run every Fifteen minutes `pdf-service:clean-folder` Removes temp files in `site/storage/app/pdf/`
 
 Run every Fifteen minutes `pdf-service:cancel-exceeded-time-pdfworks` search Jobs with in_progress status and change to fail if last update time is higher to 15 min
+
+Run every Fifteen minutes  pdf-service:monitoring-undelivered-pdfworks search works with three callback tries and send notification to slack 
 
 Run every Thirty minutes `pdf-service:clean-failed-jobs_db`  Clean failed_jobs table 
 

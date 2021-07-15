@@ -4,33 +4,36 @@ namespace Tests\Unit\Commands;
 
 use App\Models\FailedJob;
 use App\Models\PdfWork;
+use App\Notifications\MessageToSlack;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Queue;
 
 class CommandConsoleTest extends TestCase
 {
-    use RefreshDatabase, WithFaker;
+    use RefreshDatabase;
+    use WithFaker;
 
     /** @test */
     public function clean_pdf_folder_delete_old_folder()
     {
         PdfWork::flushEventListeners();
 
-        Storage::fake( 'localdisk');
+        Storage::fake('localdisk');
 
         $workDone = PdfWork::factory()->create(['status' => 'done']);
         $destDone = config('filesystems.local_pdf_path').'/'.$workDone->code.'/'.Str::lower(Str::random(5)).'.blade.php';
-        Storage::disk('localdisk')->put( $destDone, 'test_content');
+        Storage::disk('localdisk')->put($destDone, 'test_content');
 
         Storage::disk('localdisk')->assertExists($destDone);
 
         $workFail = PdfWork::factory()->create(['status' => 'fail']);
         $destFail = config('filesystems.local_pdf_path').'/'.$workFail->code.'/'.Str::lower(Str::random(5)).'.blade.php';
-        Storage::disk('localdisk')->put( $destFail, 'test_content');
+        Storage::disk('localdisk')->put($destFail, 'test_content');
 
         Storage::disk('localdisk')->assertExists($destFail);
 
@@ -39,8 +42,6 @@ class CommandConsoleTest extends TestCase
 
         Storage::disk('localdisk')->assertMissing($destFail);
         Storage::disk('localdisk')->assertMissing($destDone);
-
-
     }
 
     /** @test */
@@ -48,11 +49,11 @@ class CommandConsoleTest extends TestCase
     {
         PdfWork::flushEventListeners();
 
-        Storage::fake( 'localdisk');
+        Storage::fake('localdisk');
 
         $workInProgress = PdfWork::factory()->create(['status' => 'in_progress']);
         $destInProgress = config('filesystems.local_pdf_path').'/'.$workInProgress->code.'/'.Str::lower(Str::random(5)).'.blade.php';
-        Storage::disk('localdisk')->put( $destInProgress, 'test_content');
+        Storage::disk('localdisk')->put($destInProgress, 'test_content');
 
         Storage::disk('localdisk')->assertExists($destInProgress);
 
@@ -107,16 +108,46 @@ class CommandConsoleTest extends TestCase
         PdfWork::factory()->create(['status' => 'fail']);
 
         $this->assertCount(5, PdfWork::All());
-        $this->assertCount(1, PdfWork::where('status','fail')->get());
-        $this->assertCount(3, PdfWork::where('status','in_progress')->get());
+        $this->assertCount(1, PdfWork::where('status', 'fail')->get());
+        $this->assertCount(3, PdfWork::where('status', 'in_progress')->get());
 
         $this->artisan('pdf-service:cancel-exceeded-time-pdfworks')
             ->assertExitCode(0);
 
         $this->assertCount(5, PdfWork::All());
-        $this->assertCount(2, PdfWork::where('status','fail')->get());
-        $this->assertCount(2, PdfWork::where('status','in_progress')->get());
+        $this->assertCount(2, PdfWork::where('status', 'fail')->get());
+        $this->assertCount(2, PdfWork::where('status', 'in_progress')->get());
     }
 
+    /** @test */
+    public function monitoring_undelivered_pdfworks_send_notification_if_found_three_callback_tries()
+    {
+        PdfWork::flushEventListeners();
+        Queue::fake();
 
+        $data = [
+            'tries' => [
+                Carbon::now(),
+                Carbon::now(),
+                Carbon::now(),
+            ],
+            'response' => [
+                'message' => 'Hello World',
+                'success' => false
+            ]
+        ];
+
+        PdfWork::factory()->create(['callback_response' => $data]);
+        PdfWork::factory(2)->create();
+
+        $this->assertCount(3, PdfWork::All());
+
+        $this->artisan('pdf-service:monitoring-undelivered-pdfworks')
+            ->expectsOutput('Monitoring End')
+            ->assertExitCode(0);
+
+        Queue::assertNotPushed(MessageToSlack::class);
+
+        $this->assertCount(1, PdfWork::whereNotNull('internal_status')->get());
+    }
 }

@@ -55,7 +55,7 @@ class MonitoringUndeliveredPdfWorks extends Command
             Notification::route('slack', config('failed-job-monitor.slack.webhook_url'))
                 ->notify(new MessageToSlack('Undelivered PdfWork: '.$work->code, $this->getAttachments($work)));
         });
-        Log::info('Notification send:'.$filtered->count());
+        Log::info('Notification send: '.$filtered->count());
         $this->info('Monitoring End');
         return 0;
     }

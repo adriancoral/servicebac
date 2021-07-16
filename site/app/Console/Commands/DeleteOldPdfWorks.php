@@ -24,16 +24,6 @@ class DeleteOldPdfWorks extends Command
     protected $description = 'Delete any pdfworks older than 24 hours';
 
     /**
-     * Create a new command instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
-    /**
      * Execute the console command.
      *
      * @return int
@@ -44,12 +34,10 @@ class DeleteOldPdfWorks extends Command
         $pdfWorks = PdfWork::whereIn('status', ['done', 'fail'])
             ->where('created_at', '<', $date)
             ->get();
-        if ($pdfWorks->count()) {
-            foreach ($pdfWorks as $work) {
-                $work->delete();
-                Log::info('Deleted old pdfworks:'.$work->code);
-            }
-        }
+        $pdfWorks->each(function ($work, $key) {
+            $work->delete();
+            Log::info('Deleted old pdfworks:'.$work->code);
+        });
         return 0;
     }
 }

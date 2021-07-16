@@ -19,6 +19,7 @@ class Kernel extends ConsoleKernel
         Commands\DeleteOldPdfWorks::class,
         Commands\CancelExceededTimePdfWorks::class,
         Commands\CleanFailedJobsDb::class,
+        Commands\MonitoringUndeliveredPdfWorks::class,
     ];
 
     /**
@@ -32,7 +33,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('pdf-service:clean-folder')->everyFifteenMinutes();
         $schedule->command('pdf-service:cancel-exceeded-time-pdfworks')->everyFifteenMinutes();
         $schedule->command('pdf-service:clean-failed-jobs_db')->everyThirtyMinutes();
-
+        $schedule->command('pdf-service:monitoring-undelivered-pdfworks')->everyFifteenMinutes();
         $schedule->command('pdf-service:delete-old-pdfworks')->daily();
     }
 

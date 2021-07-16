@@ -27,4 +27,9 @@ class PdfWork extends Model
     protected $dispatchesEvents = [
         'created' => PdfWorkCreated::class,
     ];
+
+    protected $casts = [
+        'callback_response' => 'array',
+        'internal_status' => 'array',
+    ];
 }

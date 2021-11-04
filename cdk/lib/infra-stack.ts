@@ -206,6 +206,7 @@ export class Infra extends CDK.Stack {
         'QUEUE_CONNECTION': 'database',
         'SESSION_DRIVER': 'file',
         'SESSION_LIFETIME': '120',
+        'APP_URL': domainName,
       },
     }
 

@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Notifications\MessageToSlack;
 use App\Traits\PdfWorkManager;
 use Exception;
 use Illuminate\Bus\Queueable;
@@ -13,6 +14,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Notification;
 
 class CallBackResponse implements ShouldQueue
 {
@@ -46,6 +48,9 @@ class CallBackResponse implements ShouldQueue
             if ($this->availableTries()) {
                 $this->updateResponse($this->callBack($this->pdfWork));
                 $this->checkResponse();
+            } else {
+                Notification::route('slack', config('failed-job-monitor.slack.webhook_url'))
+                    ->notify(new MessageToSlack('Too many callback send attempts - PdfWork: '.$this->pdfWork->code));
             }
         } catch (ConnectionException $exception) {
             Log::error('CallBack response fail: '.$exception->getMessage());

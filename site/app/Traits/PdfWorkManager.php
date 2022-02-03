@@ -21,7 +21,7 @@ trait PdfWorkManager
      */
     protected function getWorkCode(): string
     {
-        return  Str::lower(Str::random(10));
+        return Str::lower(Str::random(10));
     }
 
     /**
@@ -29,7 +29,7 @@ trait PdfWorkManager
      */
     protected function randomFileName(): string
     {
-        return  Str::lower(Str::random(5));
+        return Str::lower(Str::random(5));
     }
 
     /**
@@ -142,9 +142,8 @@ trait PdfWorkManager
         if (isset($payload['local-templates']) && count($payload['local-templates']) > 0) {
             if (isset($payload['local-templates-pdf']) && count($payload['local-templates-pdf']) > 0) {
                 return true;
-            } else {
-                return false;
             }
+            return false;
         }
         return true;
     }
@@ -170,9 +169,8 @@ trait PdfWorkManager
         if (isset($payload['attachments'])) {
             if (count($payload['attachments']) == count($payload['local-attachments'])) {
                 return true;
-            } else {
-                return false;
             }
+            return false;
         }
         return true;
     }

@@ -86,24 +86,24 @@ class Handler extends ExceptionHandler
                 break;
             case 'ValidationException':
                 $errors = $exception->validator->errors()->getMessages();
-                return  $this->errorResponse($errors, Response::HTTP_UNPROCESSABLE_ENTITY);
+                return $this->errorResponse($errors, Response::HTTP_UNPROCESSABLE_ENTITY);
             case 'Exception':
                 $code = (is_null($exception->getCode()) || $exception->getCode() == 0) ? 500 : $exception->getCode();
-                return  $this->errorResponse($exception->getMessage(), $code);
+                return $this->errorResponse($exception->getMessage(), $code);
                 break;
             case 'ErrorException':
             default:
                 if (method_exists($exception, 'render')) {
                     return $exception->render($request);
-                } else {
-                    if (method_exists($exception, 'getStatusCode')) {
-                        $code = $exception->getStatusCode();
-                        $code = (is_null($code) || $code == 0) ? 500 : $exception->getStatusCode();
-                    } else {
-                        $code = (is_null($exception->getCode()) || $exception->getCode() == 0) ? 500 : $exception->getCode();
-                    }
-                    return  $this->errorResponse([$exception->getMessage(), $exception->getTraceAsString()], $code);
                 }
+                if (method_exists($exception, 'getStatusCode')) {
+                    $code = $exception->getStatusCode();
+                    $code = (is_null($code) || $code == 0) ? 500 : $exception->getStatusCode();
+                } else {
+                    $code = (is_null($exception->getCode()) || $exception->getCode() == 0) ? 500 : $exception->getCode();
+                }
+                return $this->errorResponse([$exception->getMessage(), $exception->getTraceAsString()], $code);
+
         }
     }
 }

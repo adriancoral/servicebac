@@ -45,7 +45,7 @@ class MonitoringUndeliveredPdfWorks extends Command
         $pdfWorks = PdfWork::whereJsonLength('callback_response->tries', 3)->get();
 
         $filtered = $pdfWorks->filter(function ($row, $key) {
-            if (! isset($row->internal_status['undelivered'])) {
+            if (!isset($row->internal_status['undelivered'])) {
                 return $row;
             }
         });
@@ -53,7 +53,7 @@ class MonitoringUndeliveredPdfWorks extends Command
         $filtered->each(function ($work, $key) {
             $work->update(['internal_status->undelivered' => ['notification' => Carbon::now()]]);
             Notification::route('slack', config('failed-job-monitor.slack.webhook_url'))
-                ->notify(new MessageToSlack("Undelivered PdfWork: ".$work->code, $this->getAttachments($work)));
+                ->notify(new MessageToSlack('Undelivered PdfWork: '.$work->code, $this->getAttachments($work)));
         });
         Log::info('Notification send:'.$filtered->count());
         $this->info('Monitoring End');

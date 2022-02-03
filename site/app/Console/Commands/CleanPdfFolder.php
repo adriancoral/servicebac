@@ -34,7 +34,7 @@ class CleanPdfFolder extends Command
     {
         $pdfWorks = PdfWork::whereIn('status', ['done', 'fail'])->get();
         $filtered = $pdfWorks->filter(function ($work, $key) {
-            if (! isset($work->internal_status['temp-folder'])) {
+            if (!isset($work->internal_status['temp-folder'])) {
                 return $work;
             }
         });

@@ -2,14 +2,13 @@
 
 namespace App\Notifications;
 
-use App\Models\PdfWork;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
+//use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\SlackAttachment;
 use Illuminate\Notifications\Messages\SlackMessage;
 use Illuminate\Notifications\Notification;
 
-class MessageToSlack extends Notification implements ShouldQueue
+class MessageToSlack extends Notification //implements ShouldQueue
 {
     use Queueable;
 

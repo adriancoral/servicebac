@@ -1,13 +1,18 @@
-import * as CDK from '@aws-cdk/core'
-import * as CodeBuild from '@aws-cdk/aws-codebuild'
-import * as CodePipeline from '@aws-cdk/aws-codepipeline'
-import * as CodePipelineAction from '@aws-cdk/aws-codepipeline-actions'
-import * as IAM from '@aws-cdk/aws-iam';
-import * as ECS from '@aws-cdk/aws-ecs';
-import { BuildEnvironmentVariableType } from '@aws-cdk/aws-codebuild'
+
+import {
+  App,
+  Stack,
+  StackProps,
+  SecretValue,
+  aws_codebuild as CodeBuild,
+  aws_codepipeline as CodePipeline,
+  aws_codepipeline_actions as CodePipelineAction,
+  aws_iam as IAM,
+  aws_ecs as ECS,
+} from 'aws-cdk-lib';
 import { Infra } from './infra-stack';
 
-export interface DeployStackProps extends CDK.StackProps {
+export interface DeployStackProps extends StackProps {
   github: {
     owner: string
     repository: string,
@@ -16,8 +21,8 @@ export interface DeployStackProps extends CDK.StackProps {
   infraStack: Infra
 }
 
-export class Pipeline extends CDK.Stack {
-  constructor(scope: CDK.App, id: string, props: DeployStackProps) {
+export class Pipeline extends Stack {
+  constructor(scope: App, id: string, props: DeployStackProps) {
     super(scope, id, props)
     
     const imagesDetailArtifact = new CodePipeline.Artifact('ImagesDetail');
@@ -49,7 +54,7 @@ export class Pipeline extends CDK.Stack {
           owner: props.github.owner,
           repo: props.github.repository,
           branch: props.github.branch,
-          oauthToken: CDK.SecretValue.secretsManager('ENV/GITHUB_TOKEN/FRONTEND', {
+          oauthToken: SecretValue.secretsManager('ENV/GITHUB_TOKEN/FRONTEND', {
             jsonField: 'GITHUB_TOKEN_FRONTEND'
           }),
           output: outputSources,
@@ -73,7 +78,7 @@ export class Pipeline extends CDK.Stack {
               privileged: true
             },
             environmentVariables: {
-              BACKEND_TAG: { type: BuildEnvironmentVariableType.PLAINTEXT, value: props.github.branch }
+              BACKEND_TAG: { type: CodeBuild.BuildEnvironmentVariableType.PLAINTEXT, value: props.github.branch }
             },
             buildSpec: CodeBuild.BuildSpec.fromSourceFilename('./cdk/buildspec.yml')
           })

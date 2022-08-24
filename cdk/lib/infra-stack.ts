@@ -1,29 +1,26 @@
+
+import {
+  App,
+  Stack,
+  StackProps,
+  Duration,
+  PhysicalName,
+  CfnOutput,
+  aws_logs as Logs,
+  aws_certificatemanager as ACM,
+  aws_route53 as Route53,
+  aws_iam as IAM,
+  aws_ecr as ECR,
+  aws_ec2 as EC2,
+  aws_ecs as ECS,
+  aws_ecs_patterns as ECSPatterns,
+  aws_elasticloadbalancingv2 as ELBV2,
+  aws_rds as RDS,
+} from 'aws-cdk-lib';
+
 import * as CDK from '@aws-cdk/core'
-import * as CodeBuild from '@aws-cdk/aws-codebuild'
-import * as S3 from '@aws-cdk/aws-s3'
-import * as Pipelines from '@aws-cdk/pipelines';
-import * as S3Deployment from '@aws-cdk/aws-s3-deployment'
-import * as CodePipeline from '@aws-cdk/aws-codepipeline'
-import * as CodePipelineAction from '@aws-cdk/aws-codepipeline-actions'
-import * as Cloudfront from '@aws-cdk/aws-cloudfront';
-import * as Logs from '@aws-cdk/aws-logs';
-import * as ACM from '@aws-cdk/aws-certificatemanager';
-import * as Route53 from '@aws-cdk/aws-route53';
-import * as IAM from '@aws-cdk/aws-iam';
-import * as ECR from '@aws-cdk/aws-ecr';
-import * as EC2 from '@aws-cdk/aws-ec2';
-import * as ECS from '@aws-cdk/aws-ecs';
-import * as ECSPatterns from '@aws-cdk/aws-ecs-patterns';
-import * as Cloudwatch from '@aws-cdk/aws-cloudwatch';
-import * as ELBV2 from '@aws-cdk/aws-elasticloadbalancingv2';
-import * as AutoScaling from '@aws-cdk/aws-autoscaling';
-import * as RDS from '@aws-cdk/aws-rds';
 
-import { DatabaseSecret } from '@aws-cdk/aws-rds';
-
-import { Duration, PhysicalName } from '@aws-cdk/core';
-
-export interface InfraStackProps extends CDK.StackProps {
+export interface InfraStackProps extends StackProps {
   containerImage: string,
   clusterInstanceType: string,
   certificateArn: string,
@@ -45,7 +42,7 @@ interface SecretAndEnvsProps {
   }
 }
 
-export class Infra extends CDK.Stack {
+export class Infra extends Stack {
 
   vpc: EC2.Vpc
   cluster: ECS.Cluster
@@ -53,7 +50,7 @@ export class Infra extends CDK.Stack {
   service: ECS.FargateService
   mainTaskDefinition: ECS.TaskDefinition
 
-  constructor(scope: CDK.App, id: string, props: InfraStackProps) {
+  constructor(scope: App, id: string, props: InfraStackProps) {
     super(scope, id, props);
 
     const domainName = 'services.bookacorner.io';
@@ -61,8 +58,6 @@ export class Infra extends CDK.Stack {
     const vpc = props.vpc ? (
       EC2.Vpc.fromLookup(this, `prev-vpc`, {
         vpcId: props.vpc,
-        isDefault: false,
-        subnetGroupNameTag: `prev-subnetgroup`
       })
     ) : (
       new EC2.Vpc(this, `newvpc`, {
@@ -82,6 +77,7 @@ export class Infra extends CDK.Stack {
 
     const cluster = new ECS.Cluster(this, 'Cluster', { vpc, clusterName: PhysicalName.GENERATE_IF_NEEDED });
 
+    /*
     const autoScalingGroup = new AutoScaling.AutoScalingGroup(this, 'ASG', {
       vpc,
       instanceType: new EC2.InstanceType(props.clusterInstanceType),
@@ -91,8 +87,8 @@ export class Infra extends CDK.Stack {
 
     const capacityProvider = new ECS.AsgCapacityProvider(this, 'AsgCapacityProvider', {
       autoScalingGroup,
-    });
-    cluster.addAsgCapacityProvider(capacityProvider)
+    });*/
+    //cluster.addAsgCapacityProvider(capacityProvider)
     // exporting cluster
     this.cluster = cluster;
 
@@ -112,7 +108,7 @@ export class Infra extends CDK.Stack {
     this.securityGroup = mySecurityGroup;
 
     /** Secrets */
-    const rdsSecret = DatabaseSecret.fromSecretArn(this, 'RDS-secret', props.rdsSecretArn);
+    const rdsSecret = RDS.DatabaseSecret.fromSecretCompleteArn(this, 'RDS-secret', props.rdsSecretArn);
 
     /** Database */
     const databaseName = 'services';
@@ -270,7 +266,7 @@ export class Infra extends CDK.Stack {
 
     this.service = alb.service;
 
-    new CDK.CfnOutput(this, 'DBConnection', {
+    new CfnOutput(this, 'DBConnection', {
       value: mySQLinstance.instanceEndpoint.socketAddress,
       description: 'DB connection',
     })

@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 import 'source-map-support/register';
-import * as cdk from '@aws-cdk/core';
+import { App } from 'aws-cdk-lib';
 import { Pipeline } from '../lib/deploy-stack';
 import { Infra } from '../lib/infra-stack';
 
-const app = new cdk.App();
+const app = new App();
 
 const infraStack = new Infra(app, 'services-stack', {
   containerImage: 'latest',
@@ -16,7 +16,7 @@ const infraStack = new Infra(app, 'services-stack', {
   },
   rdsIdentifier: 'services',
   rdsSecretArn: 'arn:aws:secretsmanager:us-east-1:352725560891:secret:prod/services/DATABASE_CREDENTIALS-ERoRW6',
-  vpc: 'vpc-079426db70eb6f565',
+  vpc: 'vpc-09b01206e28d617a0',
   env: {
     account: '352725560891',
     region: 'us-east-1'

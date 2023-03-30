@@ -30,6 +30,8 @@ RUN set -ex; \
         jpegoptim optipng pngquant gifsicle \
         vim \
         curl \
+		net-tools \
+        iputils-ping \
         supervisor && \
         mkdir -p /var/log/supervisor && \
         touch /var/log/supervisor/supervisor.log && \

@@ -11,6 +11,8 @@ services:
     environment:
       - TZ=Etc/UTC
     working_dir: /var/www
+    extra_hosts:
+      - "bacapi.local:${WEBSERVER_IP}"
     volumes:
       - "./../site/:/var/www/"
       - "./etc/php/local.ini:/usr/local/etc/php/conf.d/local.ini"
@@ -18,10 +20,17 @@ services:
       - "./etc/supervisor/:/etc/supervisor/conf.d/"
     ports:
       - "8081:80"
+    expose:
+      - 80
     networks:
-      - app-network
+      bac-network:
+        ipv4_address: ${SERVICE_IP}
 
 #Docker Networks
 networks:
-  app-network:
-    driver: bridge
+  bac-network:
+    external: true
+
+#networks:
+#  app-network:
+#    driver: bridge

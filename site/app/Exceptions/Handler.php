@@ -77,6 +77,7 @@ class Handler extends ExceptionHandler
             case 'NotFoundHttpException':
                 return $this->errorResponse('route_not_found', Response::HTTP_NOT_FOUND);
                 break;
+            case 'ConnectionException':
             case 'AuthorizationException':
                 return $this->errorResponse('only_json_content_type', Response::HTTP_BAD_REQUEST);
                 break;
